@@ -1,6 +1,6 @@
 # testing-agent
 
-Agente de qualidade / testes do hello-angular.
+Agente de qualidade / testes do handily-angular.
 
 ## Missao
 

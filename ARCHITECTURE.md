@@ -11,4 +11,4 @@ Angular 21, standalone, signals-first. Uma pasta, uma responsabilidade.
 
 Aliases TypeScript: `@core`, `@domains`, `@features`, `@shared`.
 
-O Hello World atual vive em `features/hello-world`. `App` é só o shell.
+O Handily World atual vive em `features/handily-world`. `App` é só o shell.

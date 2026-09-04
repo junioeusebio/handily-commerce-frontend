@@ -1,6 +1,6 @@
-# Hello World (Angular 21.2.22)
+# Handily World (Angular 21.2.22)
 
-Simple Angular Hello World app.
+Simple Angular Handily World app.
 
 **Angular version:** 21.2.22 (`@angular/cli` / `@angular/build` in `package.json`). Runtime packages are `@angular/*` `^21.2.0`.
 
@@ -18,7 +18,7 @@ npm install
 npm start
 ```
 
-`npm start` runs `ng serve`. Open [http://localhost:4200/](http://localhost:4200/). The page shows **Hello World**.
+`npm start` runs `ng serve`. Open [http://localhost:4200/](http://localhost:4200/). The page shows **Handily World**.
 
 You can also run:
 

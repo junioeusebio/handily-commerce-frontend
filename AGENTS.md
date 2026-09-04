@@ -1,4 +1,4 @@
-# AGENTS.md — hello-angular
+# AGENTS.md — handily-angular
 
 Guia rapido para agentes (Cursor) neste repositorio.
 

@@ -1,9 +1,9 @@
 ---
-description: Visao geral do hello-angular — stack, pastas, fluxo de PRs e vocabulario.
+description: Visao geral do handily-angular — stack, pastas, fluxo de PRs e vocabulario.
 alwaysApply: true
 ---
 
-# hello-angular — visao geral
+# handily-angular — visao geral
 
 Laboratorio Angular **21** (standalone, signals-first) com **um PR (parte/patch) por dia**.
 

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { HelloWorld } from '@features/hello-world/hello-world';
+import { HandilyWorld } from '@features/handily-world/handily-world';
 
 @Component({
   selector: 'app-root',
-  imports: [HelloWorld],
+  imports: [HandilyWorld],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
