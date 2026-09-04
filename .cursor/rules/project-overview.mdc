@@ -1,0 +1,37 @@
+---
+description: Visao geral do hello-angular — stack, pastas, fluxo de PRs e vocabulario.
+alwaysApply: true
+---
+
+# hello-angular — visao geral
+
+Laboratorio Angular **21** (standalone, signals-first) com **um PR (parte/patch) por dia**.
+
+## Stack
+
+- Angular 21+ standalone components (sem NgModules)
+- Signals como estado preferencial; RxJS quando houver streams externos
+- TypeScript path aliases: `@core`, `@domains`, `@features`, `@shared`
+- Planejado: Vitest (unit), Playwright (e2e), Tailwind + SCSS
+
+## Pastas
+
+| Pasta | Responsabilidade |
+| --- | --- |
+| `src/app/core` | Infra da app (interceptors, guards, providers). Sem regra de negocio. |
+| `src/app/domains` | Models, types e services de dominio. Features importam daqui. |
+| `src/app/features` | UI + rotas lazy. Uma feature **nao** importa outra. |
+| `src/app/shared` | UI/utils reutilizaveis, sem conhecimento de dominio. |
+
+Detalhes em `ARCHITECTURE.md`.
+
+## Fluxo de trabalho
+
+- Diff pequeno e focado — um tema por PR.
+- Nunca pedir PAT/token; usar `gh` ja autenticado.
+- Vocabulario: use **parte/patch**, nunca a palavra portuguesa "fatia".
+- Nao alterar codigo Angular da app em PRs so de config Cursor.
+
+## Agentes e skills
+
+Ver `AGENTS.md` e `.cursor/skills/` para geracao, refactor e testes.

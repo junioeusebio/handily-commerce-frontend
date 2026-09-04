@@ -1,0 +1,28 @@
+---
+description: Estado com signals e RxJS — quando usar cada um e como combinar.
+globs:
+  - "src/app/**/*.ts"
+---
+
+# Estado: Signals + RxJS
+
+## Regra pratica
+
+| Situacao | Preferir |
+| --- | --- |
+| Estado local/UI e derivado | `signal` / `computed` |
+| Side-effects locais | `effect` (com cuidado; evitar writes em cascata) |
+| HTTP, WebSocket, eventos DOM continuos | RxJS |
+| Ponte Observable → signal | `toSignal` |
+| Ponte signal → Observable | `toObservable` |
+
+## Boas praticas
+
+- Evitar `subscribe` manual em componentes; preferir `toSignal` + template com signals.
+- Sempre completar/cancelar streams ligados a ciclo de vida (`takeUntilDestroyed`).
+- Nao duplicar a mesma fonte em signal e BehaviorSubject sem motivo.
+
+## Dominio
+
+- Services em `@domains` podem expor signals de leitura e metodos que disparam atualizacoes.
+- Features consomem; nao reinventam o store da feature vizinha.

@@ -1,0 +1,26 @@
+---
+description: Estilo — Tailwind + SCSS planejados; CSS por componente e tokens.
+globs:
+  - "src/app/**/*.css"
+  - "src/app/**/*.scss"
+  - "src/styles.css"
+  - "src/**/*.html"
+---
+
+# Estilo
+
+## Plano
+
+- **Tailwind CSS** + **SCSS** planejados para o laboratorio.
+- Enquanto nao estiverem configurados: CSS por componente (`styleUrl`) + `src/styles.css` global minimo.
+
+## Diretrizes
+
+- Preferir estilos encapsulados no componente.
+- Evitar `!important` e seletores profundos em `::ng-deep` (deprecated).
+- Classes utilitarias (quando Tailwind existir) para layout rapido; SCSS para temas/tokens reutilizaveis.
+- Manter acessibilidade: contraste, foco visivel, tamanhos de toque.
+
+## Shared
+
+- Tokens e mixins globais (quando SCSS existir) em `shared` ou `styles/`, sem regras de dominio.

@@ -1,0 +1,13 @@
+# Dependencias e build
+node_modules/
+dist/
+coverage/
+tmp/
+out-tsc/
+
+# caches
+playwright-report/
+test-results/
+blob-report/
+*.tsbuildinfo
+.DS_Store

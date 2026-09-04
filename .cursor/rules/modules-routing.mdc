@@ -1,0 +1,35 @@
+---
+description: Roteamento e lazy features — sem NgModules; loadComponent / loadChildren.
+globs:
+  - "src/app/**/*routes*.ts"
+  - "src/app/**/app.config.ts"
+  - "src/app/features/**/*.ts"
+---
+
+# Roteamento (sem NgModules)
+
+Este projeto **nao usa NgModules**. Features sao carregadas via rotas standalone.
+
+## Preferencias
+
+- `provideRouter(...)` em `app.config.ts`.
+- Lazy load com `loadComponent` (componente) ou `loadChildren` (arvore de rotas da feature).
+- Cada feature exporta suas rotas localmente (ex.: `features/hello-world/routes.ts`) quando crescer.
+- Guards e interceptors vivem em `core/`.
+
+## Isolamento
+
+- Feature A **nao** importa Feature B.
+- Navegacao entre features so via router (URLs), nao via imports de classes.
+
+## Exemplo
+
+```ts
+export const routes: Routes = [
+  {
+    path: "hello",
+    loadComponent: () =>
+      import("@features/hello-world/hello-world").then((m) => m.HelloWorld),
+  },
+];
+```

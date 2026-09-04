@@ -1,0 +1,32 @@
+---
+description: Testes — Vitest (unit) e Playwright (e2e) planejados; padroes Angular.
+globs:
+  - "src/app/**/*.spec.ts"
+  - "e2e/**/*"
+  - "playwright.config.*"
+  - "vitest.config.*"
+---
+
+# Testes
+
+## Plano da stack
+
+- **Unit / componente**: Vitest (planejado; hoje pode haver specs Jasmine/Karma legados do scaffold — migrar gradualmente).
+- **E2E**: Playwright (planejado).
+
+## O que testar
+
+- Unit: logica de services, `computed`, validacoes, transforms.
+- Componente: inputs/outputs e estados principais com `TestBed`.
+- E2E: fluxos criticos do usuario (smoke + happy path).
+
+## Convencoes
+
+- Arquivo `*.spec.ts` ao lado do codigo.
+- Nomes descritivos: `it("deve desabilitar submit quando invalido", ...)`.
+- Preferir dados de teste minimos e stubs de `@domains` em vez de HTTP real.
+- Nao acoplar testes de uma feature a imports de outra feature.
+
+## Ao adicionar codigo novo
+
+- Incluir ou atualizar spec na mesma parte/patch quando a logica nao for trivial.
