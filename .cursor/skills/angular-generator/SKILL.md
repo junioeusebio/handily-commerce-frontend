@@ -7,7 +7,7 @@ description: Gera componentes, services e rotas Angular 21 standalone no layout 
 
 ## Quando usar
 
-Criar artefatos novos no hello-angular sem quebrar a arquitetura de pastas.
+Criar artefatos novos no handily-angular sem quebrar a arquitetura de pastas.
 
 ## Passos
 

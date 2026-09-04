@@ -1,6 +1,6 @@
 # architecture-agent
 
-Agente de arquitetura e fronteiras do hello-angular.
+Agente de arquitetura e fronteiras do handily-angular.
 
 ## Missao
 
