@@ -1,4 +1,4 @@
-:host { font-family: system-ui, sans-serif; display: block; min-height: 100dvh; }
-.hello { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
-h1 { font-size: 3rem; font-weight: 600; margin: 0; }
-p { margin: 0; color: #444; }
+:host {
+  display: block;
+  min-height: 100dvh;
+}
