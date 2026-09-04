@@ -1,0 +1,31 @@
+---
+description: Convencoes Angular 21 — standalone, signals, naming e imports.
+globs:
+  - "src/app/**/*.ts"
+  - "src/app/**/*.html"
+---
+
+# Convencoes Angular
+
+## Componentes e servicos
+
+- Sempre **standalone** (`standalone: true` e default em Angular 21; nao reintroduzir NgModules).
+- Preferir **signals** (`signal`, `computed`, `effect`) para estado local e derivado.
+- `input()` / `output()` / `model()` em vez de `@Input` / `@Output` legados quando criar codigo novo.
+- `inject()` em vez de constructor injection quando possivel.
+- Naming: arquivos em kebab-case (`user-profile.ts`); classes em PascalCase (`UserProfile`).
+
+## Imports
+
+- Preferir aliases: `@core/...`, `@domains/...`, `@features/...`, `@shared/...`.
+- Evitar imports relativos profundos (`../../../`).
+- Features importam de `@domains` e `@shared` / `@core`; **nunca** de outra feature.
+
+## Templates
+
+- Preferir `@if` / `@for` / `@switch` (control flow) em vez de `*ngIf` / `*ngFor`.
+- Manter templates legiveis; extrair subcomponentes quando o HTML crescer.
+
+## Change detection
+
+- Preferir `ChangeDetectionStrategy.OnPush` em componentes novos.

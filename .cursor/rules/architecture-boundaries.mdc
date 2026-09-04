@@ -1,0 +1,31 @@
+---
+description: Fronteiras de arquitetura — isolamento de features e direcao de dependencias.
+globs:
+  - "src/app/**/*.ts"
+---
+
+# Fronteiras de arquitetura
+
+## Direcao de dependencias (permitido)
+
+```
+features → domains → (types/models)
+features → shared
+features → core   (com parcimonia: guards/interceptors/providers)
+shared  → (nada de domains/features)
+core    → (nada de features; domains so se inevitavel e documentado)
+domains → (nada de features/shared UI)
+```
+
+## Isolamento de features
+
+- Feature **nao** importa outra feature (nem tipos, nem componentes, nem services internos).
+- Compartilhar via `@domains` (modelo/servico) ou `@shared` (UI generica).
+- Comunicacao cross-feature: router + estado de dominio, nunca import direto.
+
+## Checklist rapido em review
+
+- [ ] Sem import `@features/outra-feature` dentro de uma feature
+- [ ] Aliases `@core` / `@domains` / `@features` / `@shared` usados corretamente
+- [ ] App shell fino; logica de tela na feature
+- [ ] Parte/patch pequena e com um unico tema

@@ -1,0 +1,35 @@
+---
+description: Padroes para services Angular — providedIn, domains vs core, signals/RxJS.
+globs:
+  - "src/app/**/*.ts"
+---
+
+# Services
+
+## Onde colocar
+
+| Tipo | Pasta | Exemplo |
+| --- | --- | --- |
+| Dominio / API / models | `domains/` | `UserService`, `OrderApi` |
+| Infra transversal | `core/` | interceptors helpers, auth session |
+| Util sem dominio | `shared/` | formatters puros (se fizer sentido como service) |
+
+## Padroes
+
+- `providedIn: "root"` para singletons da app, salvo escopo explicito de feature/route.
+- Preferir `inject()` para dependencias.
+- Expor estado com **signals** quando for estado da app; usar Observables para streams HTTP/eventos e converter na borda (`toSignal`).
+- Services de dominio **nao** importam componentes nem features.
+
+## Exemplo
+
+```ts
+import { Injectable, inject, signal } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+
+@Injectable({ providedIn: "root" })
+export class ExampleService {
+  private readonly http = inject(HttpClient);
+  readonly loading = signal(false);
+}
+```

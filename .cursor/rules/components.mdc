@@ -1,0 +1,45 @@
+---
+description: Padroes para componentes Angular standalone (UI, inputs/outputs, OnPush).
+globs:
+  - "src/app/**/*.ts"
+  - "src/app/**/*.html"
+  - "src/app/**/*.css"
+  - "src/app/**/*.scss"
+---
+
+# Componentes
+
+## Estrutura
+
+- Um componente por pasta quando tiver template/estilo proprios: `hello-world.ts|html|css`.
+- Componentes de feature ficam em `features/<nome>/`.
+- Componentes reutilizaveis sem dominio ficam em `shared/`.
+
+## API publica
+
+- Use `input()`, `output()` e `model()` (signal-based).
+- Exponha apenas o necessario; evite campos publicos acidentais.
+- Prefira `readonly` em signals e outputs.
+
+## Exemplo minimo
+
+```ts
+import { Component, ChangeDetectionStrategy, input, output } from "@angular/core";
+
+@Component({
+  selector: "app-example",
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: "./example.html",
+  styleUrl: "./example.css",
+})
+export class Example {
+  readonly title = input.required<string>();
+  readonly clicked = output<void>();
+}
+```
+
+## Nao fazer
+
+- Nao criar NgModules.
+- Nao misturar regra de negocio pesada no componente — delegue a services em `@domains` ou `@core`.
+- Nao importar outra feature.

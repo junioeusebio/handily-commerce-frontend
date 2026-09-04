@@ -1,0 +1,25 @@
+---
+description: Formularios Angular — Reactive Forms, signals e validacao.
+globs:
+  - "src/app/**/*.ts"
+  - "src/app/**/*.html"
+---
+
+# Formularios
+
+## Preferencia
+
+- Preferir **Reactive Forms** (`FormControl`, `FormGroup`, `FormBuilder` / `NonNullableFormBuilder`).
+- Template-driven so para casos triviais.
+- Integrar com signals na borda (ex.: derivar UI state com `computed` a partir do status do form).
+
+## Validacao
+
+- Validadores no model do form, nao so no template.
+- Mensagens de erro acessiveis e proximas do campo.
+- Evitar submissao duplicada (desabilitar botao / flag `submitting`).
+
+## Nao fazer
+
+- Nao colocar chamada HTTP direta no template.
+- Nao misturar estado do form com estado de dominio sem um service claro.
