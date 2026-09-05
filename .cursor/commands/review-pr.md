@@ -1,6 +1,6 @@
 # review-pr
 
-Revise a parte/patch atual (diff do branch vs `main`) com o checklist do handily-angular.
+Revise a parte/patch atual (diff do branch vs `main`) com o checklist do handily-commerce-frontend.
 
 ## Checklist
 

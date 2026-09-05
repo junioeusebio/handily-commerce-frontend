@@ -1,6 +1,6 @@
 # architecture-agent
 
-Agente de arquitetura e fronteiras do handily-angular.
+Agente de arquitetura e fronteiras do handily-commerce-frontend.
 
 ## Missao
 

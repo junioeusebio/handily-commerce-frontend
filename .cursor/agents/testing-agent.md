@@ -1,6 +1,6 @@
 # testing-agent
 
-Agente de qualidade / testes do handily-angular.
+Agente de qualidade / testes do handily-commerce-frontend.
 
 ## Missao
 

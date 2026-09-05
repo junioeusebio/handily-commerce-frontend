@@ -1,9 +1,9 @@
 ---
-description: Visao geral do handily-angular — stack, pastas, fluxo de PRs e vocabulario.
+description: Visao geral do handily-commerce-frontend — stack, pastas, fluxo de PRs e vocabulario.
 alwaysApply: true
 ---
 
-# handily-angular — visao geral
+# handily-commerce-frontend — visao geral
 
 Laboratorio Angular **21** (standalone, signals-first) com **um PR (parte/patch) por dia**.
 
