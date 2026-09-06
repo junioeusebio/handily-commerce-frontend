@@ -14,11 +14,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render Handily World', async () => {
+  it('should render Handily Commerce Frontend', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Handily World');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce Frontend');
   });
 });

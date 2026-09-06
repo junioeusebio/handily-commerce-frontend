@@ -17,7 +17,7 @@ Cobrir services/componentes novos ou regressoes em uma parte/patch.
 
 ## E2E
 
-- Playwright para fluxos criticos (navegar, render handily-world, futuros forms).
+- Playwright para fluxos criticos (navegar, render handily-commerce-frontend, futuros forms).
 - Seletores estaveis (roles/labels); evitar CSS fragil.
 
 ## Boas praticas

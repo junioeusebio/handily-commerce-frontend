@@ -1,6 +1,6 @@
-# Handily World (Angular 21.2.22)
+# Handily Commerce Frontend (Angular 21.2.22)
 
-Simple Angular Handily World app.
+Simple Angular Handily Commerce Frontend app.
 
 **Angular version:** 21.2.22 (`@angular/cli` / `@angular/build` in `package.json`). Runtime packages are `@angular/*` `^21.2.0`.
 
@@ -18,7 +18,7 @@ npm install
 npm start
 ```
 
-`npm start` runs `ng serve`. Open [http://localhost:4200/](http://localhost:4200/). The page shows **Handily World**.
+`npm start` runs `ng serve`. Open [http://localhost:4200/](http://localhost:4200/). The page shows **Handily Commerce Frontend**.
 
 You can also run:
 

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { HandilyWorld } from '@features/handily-world/handily-world';
+import { HandilyCommerceFrontend } from '@features/handily-commerce-frontend/handily-commerce-frontend';
 
 @Component({
   selector: 'app-root',
-  imports: [HandilyWorld],
+  imports: [HandilyCommerceFrontend],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
