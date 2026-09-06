@@ -14,7 +14,7 @@ Este projeto **nao usa NgModules**. Features sao carregadas via rotas standalone
 
 - `provideRouter(...)` em `app.config.ts`.
 - Lazy load com `loadComponent` (componente) ou `loadChildren` (arvore de rotas da feature).
-- Cada feature exporta suas rotas localmente (ex.: `features/handily-world/routes.ts`) quando crescer.
+- Cada feature exporta suas rotas localmente (ex.: `features/handily-commerce-frontend/routes.ts`) quando crescer.
 - Guards e interceptors vivem em `core/`.
 
 ## Isolamento
@@ -27,9 +27,9 @@ Este projeto **nao usa NgModules**. Features sao carregadas via rotas standalone
 ```ts
 export const routes: Routes = [
   {
-    path: "handily",
+    path: "handily-commerce-frontend",
     loadComponent: () =>
-      import("@features/handily-world/handily-world").then((m) => m.HandilyWorld),
+      import("@features/handily-commerce-frontend/handily-commerce-frontend").then((m) => m.HandilyCommerceFrontend),
   },
 ];
 ```

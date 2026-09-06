@@ -1,4 +1,4 @@
-# AGENTS.md — handily-angular
+# AGENTS.md — handily-commerce-frontend
 
 Guia rapido para agentes (Cursor) neste repositorio.
 

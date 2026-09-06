@@ -1,6 +1,6 @@
 # frontend-agent
 
-Agente focado em UI Angular 21 do handily-angular.
+Agente focado em UI Angular 21 do handily-commerce-frontend.
 
 ## Missao
 
