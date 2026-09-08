@@ -13,4 +13,4 @@ Aliases TypeScript: `@core`, `@domains`, `@features`, `@shared`.
 
 O Handily Commerce Frontend atual vive em `features/handily-commerce-frontend`. `App` é só o shell.
 
-Environments (`src/environments/`) hold `apiBaseUrl` / `apiVersion`. `core/config` exposes them via `APP_ENVIRONMENT` and `resolveApiRoot()` — sem HttpClient ainda.
+Environments (`src/environments/`) hold `apiBaseUrl` / `apiVersion`. `core/config` exposes them via `APP_ENVIRONMENT`, `resolveApiRoot()`, and `APP_VERSION` (from `package.json`). `provideHttpClient()` is registered in `app.config.ts`; the feature footer loads `GET {apiRoot}/apiVersion`.

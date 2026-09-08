@@ -10,7 +10,7 @@ export const APP_ENVIRONMENT = new InjectionToken<AppEnvironment>('APP_ENVIRONME
 
 /**
  * Registers {@link APP_ENVIRONMENT} with the values from the file-replaced
- * `environment` module. No HttpClient wiring yet (backlog A4).
+ * `environment` module.
  */
 export function provideAppEnvironment(
   value: AppEnvironment = environment,

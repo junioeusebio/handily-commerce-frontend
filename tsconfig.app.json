@@ -5,16 +5,37 @@
     "types": [],
     "baseUrl": "./",
     "paths": {
-      "@core": ["src/app/core/index.ts"],
-      "@core/*": ["src/app/core/*"],
-      "@domains": ["src/app/domains/index.ts"],
-      "@domains/*": ["src/app/domains/*"],
-      "@features": ["src/app/features/index.ts"],
-      "@features/*": ["src/app/features/*"],
-      "@shared": ["src/app/shared/index.ts"],
-      "@shared/*": ["src/app/shared/*"]
-    }
+      "@core": [
+        "src/app/core/index.ts"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@domains": [
+        "src/app/domains/index.ts"
+      ],
+      "@domains/*": [
+        "src/app/domains/*"
+      ],
+      "@features": [
+        "src/app/features/index.ts"
+      ],
+      "@features/*": [
+        "src/app/features/*"
+      ],
+      "@shared": [
+        "src/app/shared/index.ts"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ]
+    },
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
 }
