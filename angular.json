@@ -48,7 +48,8 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.production.ts"
                 }
-              ]
+              ],
+              "baseHref": "/handily-commerce-frontend/"
             },
             "development": {
               "optimization": false,

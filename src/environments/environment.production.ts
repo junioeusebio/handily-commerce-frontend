@@ -1,8 +1,9 @@
 import type { AppEnvironment } from './environment.types';
 
 /**
- * Production — same-origin `/api` behind reverse proxy by default.
- * Override at deploy time if the API is on another origin.
+ * Production — apiBaseUrl is a same-origin/placeholder `/api` until a real API
+ * host is configured. Angular `baseHref` for this build is
+ * `/handily-commerce-frontend/` (GitHub Pages project site).
  */
 export const environment: AppEnvironment = {
   production: true,
