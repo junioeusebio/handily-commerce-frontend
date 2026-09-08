@@ -30,6 +30,22 @@ You can also run:
 npx ng serve
 ```
 
+
+## API backend (base URL)
+
+The frontend reads `apiBaseUrl` + `apiVersion` from `src/environments/` (wired via `fileReplacements` in `angular.json` and exposed as `APP_ENVIRONMENT` / `resolveApiRoot()` in `@core`).
+
+| Build | `apiBaseUrl` | `apiVersion` | Resolved root (`resolveApiRoot`) |
+| --- | --- | --- | --- |
+| development (`ng serve` / default env) | `http://localhost:5228/api` | `v1` | `http://localhost:5228/api/v1` |
+| production (`ng build`) | `/api` (placeholder / same-origin note) | `v1` | `/api/v1` |
+
+**Assumption:** the paired backend (`junioeusebio/handily-commerce-backend`) `http` launch profile uses `applicationUrl` **http://localhost:5228** (`launchSettings.json`), with `Api:RoutePrefix=api` and `Api:Version=v1` in `appsettings.json`. Health will be `GET {apiRoot}/health` (HTTP client lands in backlog A4).
+
+To point the FE at another BE host while developing, edit `src/environments/environment.development.ts` (and the default `environment.ts` if you run without the development configuration).
+Production `ng build` also sets Angular `baseHref` to `/handily-commerce-frontend/` so the app matches the GitHub Pages project path (aligned with the Pages deploy workflow CLI flag). `apiBaseUrl` stays a placeholder until the API is hosted; override `environment.production.ts` when you have a real backend origin.
+
+
 ## Build
 
 ```bash

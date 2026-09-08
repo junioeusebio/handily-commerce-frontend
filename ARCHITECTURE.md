@@ -4,7 +4,7 @@ Angular 21, standalone, signals-first. Uma pasta, uma responsabilidade.
 
 | Pasta | Papel |
 | --- | --- |
-| `src/app/core` | Infra da app (interceptors, guards). Sem regra de negócio. |
+| `src/app/core` | Infra da app (interceptors, guards, config/environment). Sem regra de negócio. |
 | `src/app/domains` | Models e services. Features importam daqui. |
 | `src/app/features` | UI e rotas. Uma feature **não** importa outra. |
 | `src/app/shared` | UI/util reutilizável, sem domínio. |
@@ -12,3 +12,5 @@ Angular 21, standalone, signals-first. Uma pasta, uma responsabilidade.
 Aliases TypeScript: `@core`, `@domains`, `@features`, `@shared`.
 
 O Handily Commerce Frontend atual vive em `features/handily-commerce-frontend`. `App` é só o shell.
+
+Environments (`src/environments/`) hold `apiBaseUrl` / `apiVersion`. `core/config` exposes them via `APP_ENVIRONMENT` and `resolveApiRoot()` — sem HttpClient ainda.
