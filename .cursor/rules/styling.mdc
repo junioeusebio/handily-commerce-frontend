@@ -1,26 +1,42 @@
 ---
-description: Estilo — Tailwind + SCSS planejados; CSS por componente e tokens.
+description: Estilo — Tailwind utilities first; SCSS tokens globais; component SCSS excepcional.
 globs:
   - "src/app/**/*.css"
   - "src/app/**/*.scss"
-  - "src/styles.css"
+  - "src/styles.scss"
+  - "src/styles/**"
   - "src/**/*.html"
+  - ".postcssrc.json"
 ---
 
 # Estilo
 
-## Plano
+## Stack
 
-- **Tailwind CSS** + **SCSS** planejados para o laboratorio.
-- Enquanto nao estiverem configurados: CSS por componente (`styleUrl`) + `src/styles.css` global minimo.
+- **Tailwind CSS v4** (PostCSS via `.postcssrc.json`) + **SCSS design tokens** em `src/styles/`.
+- Tema Tailwind alinhado aos CSS custom properties emitidos por `_tokens.scss` (`@theme inline` em `src/styles.scss`).
+
+## Preferencias (ordem)
+
+1. **Tailwind utilities nos templates** sempre que possivel (layout, tipografia, cores, spacing, radius).
+2. **Tokens globais SCSS** permanecem em `src/styles/` (`_colors`, `_spacing`, `_typography`, `_radius`, `_tokens`) — fonte unica da verdade; nao duplicar valores magicos.
+3. **Component `.scss` / `.css`** so em casos especificos:
+   - animacoes complexas
+   - seletores que Tailwind nao expressa bem
+   - overrides de terceiros
+   - estilos de `:host` minimos quando necessario
 
 ## Diretrizes
 
-- Preferir estilos encapsulados no componente.
-- Evitar `!important` e seletores profundos em `::ng-deep` (deprecated).
-- Classes utilitarias (quando Tailwind existir) para layout rapido; SCSS para temas/tokens reutilizaveis.
+- Evitar `!important` e `::ng-deep` (deprecated).
+- Preferir tokens via utilities (`bg-surface`, `text-muted`, `p-5`, `rounded-md`) em vez de `var(--…)` ad-hoc no SCSS do componente.
 - Manter acessibilidade: contraste, foco visivel, tamanhos de toque.
+- Nao misturar regras de dominio em `src/styles/` — so tokens/base global.
 
-## Shared
+## Arquivos
 
-- Tokens e mixins globais (quando SCSS existir) em `shared` ou `styles/`, sem regras de dominio.
+| Caminho | Papel |
+| --- | --- |
+| `src/styles.scss` | Entrada global: tokens + Tailwind + reset/base |
+| `src/styles/_*.scss` | Fontes SCSS dos tokens |
+| `.postcssrc.json` | Plugin `@tailwindcss/postcss` |

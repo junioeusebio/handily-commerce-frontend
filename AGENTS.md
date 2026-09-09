@@ -9,11 +9,11 @@ Guia rapido para agentes (Cursor) neste repositorio.
 - Aliases: @core, @domains, @features, @shared
 - Detalhes: ARCHITECTURE.md e .cursor/rules/
 
-## Stack planejada
+## Stack
 
 - Testes unitarios: **Vitest**
-- E2E: **Playwright**
-- Estilo: **Tailwind** + **SCSS**
+- E2E: **Playwright** (planejado)
+- Estilo: **Tailwind CSS v4** + **SCSS** design tokens
 
 ## Agentes especializados
 
@@ -22,6 +22,9 @@ Guia rapido para agentes (Cursor) neste repositorio.
 | Frontend | .cursor/agents/frontend-agent.md | Componentes, templates, UI |
 | Arquitetura | .cursor/agents/architecture-agent.md | Fronteiras e dependencias |
 | Testing | .cursor/agents/testing-agent.md | Vitest / Playwright |
+| SCSS / tokens | .cursor/agents/scss-agent.md | Tokens SCSS; component SCSS raro |
+| Tailwind | .cursor/agents/tailwind-agent.md | Utilities Tailwind nos templates |
+| Styles review | .cursor/agents/styles-review-agent.md | Review de PRs de estilo (nao implementa) |
 
 ## Skills
 
