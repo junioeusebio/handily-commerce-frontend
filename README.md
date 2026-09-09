@@ -46,6 +46,12 @@ To point the FE at another BE host while developing, edit `src/environments/envi
 Production `ng build` also sets Angular `baseHref` to `/handily-commerce-frontend/` so the app matches the GitHub Pages project path (aligned with the Pages deploy workflow CLI flag). Production `apiBaseUrl` points at the Render backend; the main-page footer shows `WEB: {package.json version} | API: {GET /api/v1/apiVersion}` (depends on BE endpoint + CORS). Live site: https://junioeusebio.github.io/handily-commerce-frontend/
 
 
+## Styles
+
+- **SCSS design tokens** in `src/styles/` (CSS variables on `:root`)
+- **Tailwind CSS v4** via PostCSS (`.postcssrc.json`); theme bridged in `src/styles.scss`
+- Prefer Tailwind utilities in templates; see `ARCHITECTURE.md` and `.cursor/rules/styling.mdc`
+
 ## Build
 
 ```bash

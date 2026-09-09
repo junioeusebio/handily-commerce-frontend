@@ -1,39 +1,6 @@
+/* Host layout only — template styles use Tailwind utilities. */
 :host {
-  font-family: var(--font-family-sans);
   display: block;
   min-height: 100dvh;
-}
-
-.handily-commerce-frontend {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-5);
-}
-
-h1 {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
-  color: var(--color-text);
-  margin: 0;
-}
-
-p {
-  margin: 0;
-  color: var(--color-text-muted);
-}
-
-.app-versions {
-  margin-top: var(--space-5);
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-subtle);
-  font-variant-numeric: tabular-nums;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  font-family: var(--font-family-sans);
 }

@@ -15,9 +15,9 @@ O Handily Commerce Frontend atual vive em `features/handily-commerce-frontend`. 
 
 Environments (`src/environments/`) hold `apiBaseUrl` / `apiVersion`. `core/config` exposes them via `APP_ENVIRONMENT`, `resolveApiRoot()`, and `APP_VERSION` (from `package.json`). `provideHttpClient()` is registered in `app.config.ts`; the feature footer loads `GET {apiRoot}/apiVersion`.
 
-## Styles (SCSS design tokens)
+## Styles (SCSS tokens + Tailwind)
 
-Global styles live in `src/styles.scss`, which `@use`s the tokens layer under `src/styles/`:
+Global styles live in `src/styles.scss`, which `@use`s the tokens layer under `src/styles/` and **Tailwind CSS v4** (`@use 'tailwindcss'` + PostCSS via `.postcssrc.json`).
 
 | File | Role |
 | --- | --- |
@@ -26,5 +26,6 @@ Global styles live in `src/styles.scss`, which `@use`s the tokens layer under `s
 | `_typography.scss` | Font family / size / weight |
 | `_radius.scss` | Border radius |
 | `_tokens.scss` | Emits CSS custom properties on `:root` |
+| `styles.scss` `@theme inline` | Bridges those CSS vars into Tailwind theme utilities |
 
-Components consume tokens via `var(--token-name)` (e.g. `--color-text`, `--space-5`). Prefer CSS variables over importing SCSS maps into every component so theming stays centralized.
+**Preference:** Tailwind utilities in templates; keep tokens in `src/styles/`; component `.scss` only for cases Tailwind cannot express cleanly. See `.cursor/rules/styling.mdc`.
