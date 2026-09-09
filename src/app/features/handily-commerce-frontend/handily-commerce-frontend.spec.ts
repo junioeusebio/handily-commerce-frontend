@@ -5,7 +5,12 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
+import {
+  APP_VERSION,
+  provideAppEnvironment,
+  resolveApiRoot,
+  type AppEnvironment,
+} from '@core';
 
 import { HandilyCommerceFrontend } from './handily-commerce-frontend';
 
@@ -50,7 +55,7 @@ describe('HandilyCommerceFrontend', () => {
     expect(compiled.querySelector('p')?.textContent).toContain(
       'Angular Handily Commerce Frontend',
     );
-    expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: 0.0.0');
+    expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
 
     http.verify();

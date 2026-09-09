@@ -5,7 +5,12 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
+import {
+  APP_VERSION,
+  provideAppEnvironment,
+  resolveApiRoot,
+  type AppEnvironment,
+} from '@core';
 
 import { App } from './app';
 
@@ -47,7 +52,7 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce Frontend');
-    expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: 0.0.0');
+    expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
 
     http.verify();
