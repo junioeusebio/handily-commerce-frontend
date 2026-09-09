@@ -1,0 +1,49 @@
+// Aggregates SCSS token maps and exposes CSS custom properties on :root.
+@use 'colors' as colors;
+@use 'spacing' as spacing;
+@use 'typography' as typography;
+@use 'radius' as radius;
+
+:root {
+  /* Colors */
+  --color-bg: #{colors.$color-bg};
+  --color-surface: #{colors.$color-surface};
+  --color-text: #{colors.$color-text};
+  --color-text-muted: #{colors.$color-text-muted};
+  --color-text-subtle: #{colors.$color-text-subtle};
+  --color-primary: #{colors.$color-primary};
+  --color-primary-soft: #{colors.$color-primary-soft};
+  --color-border: #{colors.$color-border};
+
+  /* Spacing */
+  --space-1: #{spacing.$space-1};
+  --space-2: #{spacing.$space-2};
+  --space-3: #{spacing.$space-3};
+  --space-4: #{spacing.$space-4};
+  --space-5: #{spacing.$space-5};
+  --space-6: #{spacing.$space-6};
+  --space-8: #{spacing.$space-8};
+
+  /* Typography */
+  --font-family-sans: #{typography.$font-family-sans};
+  --font-family-mono: #{typography.$font-family-mono};
+  --font-size-xs: #{typography.$font-size-xs};
+  --font-size-sm: #{typography.$font-size-sm};
+  --font-size-md: #{typography.$font-size-md};
+  --font-size-lg: #{typography.$font-size-lg};
+  --font-size-xl: #{typography.$font-size-xl};
+  --font-size-2xl: #{typography.$font-size-2xl};
+  --font-size-3xl: #{typography.$font-size-3xl};
+  --font-weight-regular: #{typography.$font-weight-regular};
+  --font-weight-medium: #{typography.$font-weight-medium};
+  --font-weight-semibold: #{typography.$font-weight-semibold};
+  --font-weight-bold: #{typography.$font-weight-bold};
+  --line-height-tight: #{typography.$line-height-tight};
+  --line-height-normal: #{typography.$line-height-normal};
+
+  /* Radius */
+  --radius-sm: #{radius.$radius-sm};
+  --radius-md: #{radius.$radius-md};
+  --radius-lg: #{radius.$radius-lg};
+  --radius-full: #{radius.$radius-full};
+}

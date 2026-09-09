@@ -13,7 +13,7 @@ interface ApiVersionResponse {
   selector: 'app-handily-commerce-frontend',
   imports: [],
   templateUrl: './handily-commerce-frontend.html',
-  styleUrl: './handily-commerce-frontend.css',
+  styleUrl: './handily-commerce-frontend.scss',
 })
 export class HandilyCommerceFrontend implements OnInit {
   private readonly http = inject(HttpClient);
