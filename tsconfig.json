@@ -14,15 +14,32 @@
     "module": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@core": ["src/app/core/index.ts"],
-      "@core/*": ["src/app/core/*"],
-      "@domains": ["src/app/domains/index.ts"],
-      "@domains/*": ["src/app/domains/*"],
-      "@features": ["src/app/features/index.ts"],
-      "@features/*": ["src/app/features/*"],
-      "@shared": ["src/app/shared/index.ts"],
-      "@shared/*": ["src/app/shared/*"]
-    }
+      "@core": [
+        "src/app/core/index.ts"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@domains": [
+        "src/app/domains/index.ts"
+      ],
+      "@domains/*": [
+        "src/app/domains/*"
+      ],
+      "@features": [
+        "src/app/features/index.ts"
+      ],
+      "@features/*": [
+        "src/app/features/*"
+      ],
+      "@shared": [
+        "src/app/shared/index.ts"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ]
+    },
+    "resolveJsonModule": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -32,7 +49,11 @@
   },
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.spec.json" }
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
   ]
 }

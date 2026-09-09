@@ -2,18 +2,40 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["vitest/globals"],
+    "types": [
+      "vitest/globals"
+    ],
     "baseUrl": "./",
     "paths": {
-      "@core": ["src/app/core/index.ts"],
-      "@core/*": ["src/app/core/*"],
-      "@domains": ["src/app/domains/index.ts"],
-      "@domains/*": ["src/app/domains/*"],
-      "@features": ["src/app/features/index.ts"],
-      "@features/*": ["src/app/features/*"],
-      "@shared": ["src/app/shared/index.ts"],
-      "@shared/*": ["src/app/shared/*"]
-    }
+      "@core": [
+        "src/app/core/index.ts"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@domains": [
+        "src/app/domains/index.ts"
+      ],
+      "@domains/*": [
+        "src/app/domains/*"
+      ],
+      "@features": [
+        "src/app/features/index.ts"
+      ],
+      "@features/*": [
+        "src/app/features/*"
+      ],
+      "@shared": [
+        "src/app/shared/index.ts"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ]
+    },
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts"
+  ]
 }
