@@ -6,9 +6,65 @@
   </h1>
   <p class="m-0 text-muted">Angular {{ title() }}</p>
   <footer
-    class="app-versions mt-5 rounded-md border border-border bg-surface px-4 py-2 text-sm text-subtle tabular-nums"
+    class="app-versions mt-5 flex flex-wrap items-center justify-center gap-3 rounded-md border border-border bg-surface px-4 py-2 text-sm text-subtle tabular-nums"
     aria-label="Versões WEB e API"
   >
-    WEB: {{ feVersion }} | API: {{ apiVersionLabel() }}
+    <span>WEB: {{ feVersion }} | API: {{ apiVersionLabel() }}</span>
+    <button
+      #openChangelogBtn
+      type="button"
+      class="rounded-md border border-border bg-primary-soft px-3 py-1 text-sm font-medium text-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      aria-haspopup="dialog"
+      [attr.aria-expanded]="changelogOpen()"
+      aria-controls="changelog-dialog"
+      (click)="openChangelog()"
+    >
+      What's new
+    </button>
   </footer>
 </main>
+
+@if (changelogOpen()) {
+  <dialog
+    #changelogPanel
+    id="changelog-dialog"
+    aria-labelledby="changelog-title"
+    aria-modal="true"
+    class="max-h-[min(80dvh,32rem)] w-full max-w-md overflow-auto rounded-lg border border-border bg-surface p-5 shadow-lg backdrop:bg-foreground/40"
+    (click)="onDialogClick($event)"
+    (keydown)="onDialogKeydown($event)"
+    (cancel)="onDialogCancel($event)"
+  >
+    <div class="mb-4 flex items-start justify-between gap-3">
+      <h2 id="changelog-title" class="m-0 text-lg font-semibold text-foreground">
+        What's new
+      </h2>
+      <button
+        #closeChangelogBtn
+        type="button"
+        class="rounded-md border border-border bg-background px-2 py-1 text-sm text-muted transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        aria-label="Close what's new"
+        (click)="closeChangelog()"
+      >
+        Close
+      </button>
+    </div>
+
+    @if (changelogStatus() === 'loading') {
+      <p class="m-0 text-sm text-subtle tabular-nums" aria-live="polite">—</p>
+    } @else if (changelogStatus() === 'error') {
+      <p class="m-0 text-sm text-muted" role="alert">erro</p>
+    } @else if (changelogItems().length === 0) {
+      <p class="m-0 text-sm text-muted">No release notes yet.</p>
+    } @else {
+      <ul class="m-0 flex list-none flex-col gap-3 p-0">
+        @for (item of changelogItems(); track item.title) {
+          <li class="rounded-md border border-border bg-background px-3 py-2">
+            <h3 class="m-0 text-base font-medium text-foreground">{{ item.title }}</h3>
+            <p class="mt-1 mb-0 text-sm text-muted">{{ item.summary }}</p>
+          </li>
+        }
+      </ul>
+    }
+  </dialog>
+}
