@@ -32,6 +32,18 @@ describe('HandilyCommerceFrontend', () => {
     }).compileComponents();
   });
 
+  function flushApiVersion(
+    http: HttpTestingController,
+    body: { version: string } | null = { version: 'v1' },
+  ): void {
+    const req = http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`);
+    if (body) {
+      req.flush(body);
+    } else {
+      req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+    }
+  }
+
   it('should create', () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     expect(fixture.componentInstance).toBeTruthy();
@@ -57,6 +69,7 @@ describe('HandilyCommerceFrontend', () => {
     );
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
+    expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain("What's new");
 
     http.verify();
   });
@@ -94,4 +107,206 @@ describe('HandilyCommerceFrontend', () => {
     http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`).flush({ version: 'v1' });
     http.verify();
   });
+
+  it('should open the changelog modal and list items', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    const openBtn = root.querySelector(
+      'button[aria-haspopup="dialog"]',
+    ) as HTMLButtonElement;
+    openBtn.click();
+    fixture.detectChanges();
+
+    expect(root.querySelector('#changelog-dialog')).toBeTruthy();
+    expect(root.querySelector('#changelog-dialog')?.textContent).toContain('—');
+
+    const changelogReq = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
+    expect(changelogReq.request.method).toBe('GET');
+    changelogReq.flush([
+      { title: '0.4.0', summary: "What's new modal" },
+      { title: '0.3.0', summary: 'Prior release' },
+    ]);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const dialog = root.querySelector('#changelog-dialog');
+    expect(dialog?.textContent).toContain('0.4.0');
+    expect(dialog?.textContent).toContain("What's new modal");
+    expect(dialog?.textContent).toContain('0.3.0');
+    expect(dialog?.getAttribute('role')).toBe('dialog');
+    expect(dialog?.getAttribute('aria-modal')).toBe('true');
+
+    http.verify();
+  });
+
+  it('should show erro in the modal when changelog request fails', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+
+    for (let i = 0; i < 3; i++) {
+      const req = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
+      req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+    }
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(root.querySelector('#changelog-dialog')?.textContent).toContain('erro');
+    http.verify();
+  });
+
+  it('should close the modal on Escape and via the close button', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+    expect(root.querySelector('#changelog-dialog')).toBeTruthy();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+
+    (root.querySelector('button[aria-label="Close what\'s new"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+
+    http.verify();
+  });
+
+  it('should show empty copy when changelog returns []', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(root.querySelector('#changelog-dialog')?.textContent).toContain(
+      'No release notes yet.',
+    );
+    http.verify();
+  });
+
+  it('should ignore keyboard handling when the modal is closed', () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    const component = fixture.componentInstance as unknown as {
+      onDocumentKeydown: (event: KeyboardEvent) => void;
+      changelogOpen: { (): boolean };
+    };
+    expect(component.changelogOpen()).toBe(false);
+    component.onDocumentKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
+    component.onDocumentKeydown(new KeyboardEvent('keydown', { key: 'Tab' }));
+    expect(component.changelogOpen()).toBe(false);
+    http.verify();
+  });
+
+  it('should close when the overlay is clicked', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+
+    const overlay = root.querySelector('[role="presentation"]') as HTMLElement;
+    overlay.click();
+    fixture.detectChanges();
+    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+    http.verify();
+  });
+
+  it('should trap Tab focus inside the open modal', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([
+      { title: '1.0.0', summary: 'Ship it' },
+    ]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as {
+      onDocumentKeydown: (event: KeyboardEvent) => void;
+      trapFocus: (event: KeyboardEvent) => void;
+    };
+
+    const panel = root.querySelector('#changelog-dialog') as HTMLElement;
+    const buttons = panel.querySelectorAll('button');
+    expect(buttons.length).toBeGreaterThan(0);
+    const first = buttons[0] as HTMLButtonElement;
+    const last = buttons[buttons.length - 1] as HTMLButtonElement;
+
+    last.focus();
+    const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    Object.defineProperty(tabEvent, 'target', { value: last });
+    component.onDocumentKeydown(tabEvent);
+    expect(document.activeElement).toBe(first);
+
+    first.focus();
+    const shiftTab = new KeyboardEvent('keydown', {
+      key: 'Tab',
+      bubbles: true,
+      cancelable: true,
+      shiftKey: true,
+    });
+    component.onDocumentKeydown(shiftTab);
+    expect(document.activeElement).toBe(last);
+
+    // Mid-list Tab should not wrap.
+    if (buttons.length > 1) {
+      first.focus();
+      const midTab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+      component.onDocumentKeydown(midTab);
+      expect(document.activeElement).toBe(first);
+    }
+
+    http.verify();
+  });
+
 });
