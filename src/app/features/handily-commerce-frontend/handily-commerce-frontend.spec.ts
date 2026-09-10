@@ -259,6 +259,37 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
+  it('should close when Enter or Space is pressed on the dialog backdrop', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushApiVersion(http);
+
+    let dialog = await openChangelogModal(fixture, http);
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+
+    dialog.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    );
+    fixture.detectChanges();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+
+    dialog = await openChangelogModal(fixture, http);
+    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    fixture.detectChanges();
+
+    dialog.dispatchEvent(
+      new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }),
+    );
+    fixture.detectChanges();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+
+    http.verify();
+  });
+
   it('should trap Tab focus inside the open modal', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);

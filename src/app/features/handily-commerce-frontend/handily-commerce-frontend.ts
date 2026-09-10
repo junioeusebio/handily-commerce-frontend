@@ -89,8 +89,21 @@ export class HandilyCommerceFrontend implements OnInit {
     queueMicrotask(() => this.openButton()?.nativeElement.focus());
   }
 
-  /** Backdrop dismiss: click on the dialog itself (not its children). */
+  /** Backdrop dismiss: interaction on the dialog itself (not its children). */
   protected onDialogClick(event: MouseEvent): void {
+    this.dismissIfBackdrop(event);
+  }
+
+  /** Keyboard equivalent for backdrop dismiss (Enter / Space). */
+  protected onDialogKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+    event.preventDefault();
+    this.dismissIfBackdrop(event);
+  }
+
+  private dismissIfBackdrop(event: Event): void {
     if (event.target === event.currentTarget) {
       this.closeChangelog();
     }
