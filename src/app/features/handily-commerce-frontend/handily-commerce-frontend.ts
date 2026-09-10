@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import {
+  afterNextRender,
   Component,
   DestroyRef,
   ElementRef,
   HostListener,
   inject,
+  Injector,
   OnInit,
   signal,
   viewChild,
@@ -30,10 +32,11 @@ export class HandilyCommerceFrontend implements OnInit {
   private readonly env = inject(APP_ENVIRONMENT);
   private readonly changelogApi = inject(ChangelogService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   private readonly openButton = viewChild<ElementRef<HTMLButtonElement>>('openChangelogBtn');
   private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeChangelogBtn');
-  private readonly modalPanel = viewChild<ElementRef<HTMLElement>>('changelogPanel');
+  private readonly modalPanel = viewChild<ElementRef<HTMLDialogElement>>('changelogPanel');
 
   protected readonly title = signal('Handily Commerce Frontend');
   protected readonly feVersion = APP_VERSION;
@@ -68,12 +71,35 @@ export class HandilyCommerceFrontend implements OnInit {
   protected openChangelog(): void {
     this.changelogOpen.set(true);
     this.loadChangelog();
-    queueMicrotask(() => this.closeButton()?.nativeElement.focus());
+    afterNextRender(
+      () => {
+        this.modalPanel()?.nativeElement.showModal();
+        this.closeButton()?.nativeElement.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   protected closeChangelog(): void {
+    const dialog = this.modalPanel()?.nativeElement;
+    if (dialog?.open) {
+      dialog.close();
+    }
     this.changelogOpen.set(false);
     queueMicrotask(() => this.openButton()?.nativeElement.focus());
+  }
+
+  /** Backdrop dismiss: click on the dialog itself (not its children). */
+  protected onDialogClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeChangelog();
+    }
+  }
+
+  /** Escape: keep Angular state in sync with the native dialog. */
+  protected onDialogCancel(event: Event): void {
+    event.preventDefault();
+    this.closeChangelog();
   }
 
   @HostListener('document:keydown', ['$event'])

@@ -44,6 +44,20 @@ describe('HandilyCommerceFrontend', () => {
     }
   }
 
+  async function openChangelogModal(
+    fixture: ReturnType<typeof TestBed.createComponent<HandilyCommerceFrontend>>,
+    http: HttpTestingController,
+  ): Promise<HTMLDialogElement> {
+    const root = fixture.nativeElement as HTMLElement;
+    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const dialog = root.querySelector('dialog#changelog-dialog') as HTMLDialogElement;
+    expect(dialog).toBeTruthy();
+    return dialog;
+  }
+
   it('should create', () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     expect(fixture.componentInstance).toBeTruthy();
@@ -116,14 +130,9 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    const openBtn = root.querySelector(
-      'button[aria-haspopup="dialog"]',
-    ) as HTMLButtonElement;
-    openBtn.click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
 
-    expect(root.querySelector('#changelog-dialog')).toBeTruthy();
-    expect(root.querySelector('#changelog-dialog')?.textContent).toContain('—');
+    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain('—');
 
     const changelogReq = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
     expect(changelogReq.request.method).toBe('GET');
@@ -135,11 +144,11 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const dialog = root.querySelector('#changelog-dialog');
+    const dialog = root.querySelector('dialog#changelog-dialog') as HTMLDialogElement;
     expect(dialog?.textContent).toContain('0.4.0');
     expect(dialog?.textContent).toContain("What's new modal");
     expect(dialog?.textContent).toContain('0.3.0');
-    expect(dialog?.getAttribute('role')).toBe('dialog');
+    expect(dialog?.tagName).toBe('DIALOG');
     expect(dialog?.getAttribute('aria-modal')).toBe('true');
 
     http.verify();
@@ -153,8 +162,7 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
 
     for (let i = 0; i < 3; i++) {
       const req = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
@@ -164,7 +172,7 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(root.querySelector('#changelog-dialog')?.textContent).toContain('erro');
+    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain('erro');
     http.verify();
   });
 
@@ -176,24 +184,22 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
     fixture.detectChanges();
-    expect(root.querySelector('#changelog-dialog')).toBeTruthy();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeTruthy();
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     fixture.detectChanges();
-    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
     fixture.detectChanges();
 
     (root.querySelector('button[aria-label="Close what\'s new"]') as HTMLButtonElement).click();
     fixture.detectChanges();
-    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
 
     http.verify();
   });
@@ -206,13 +212,12 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(root.querySelector('#changelog-dialog')?.textContent).toContain(
+    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain(
       'No release notes yet.',
     );
     http.verify();
@@ -235,7 +240,7 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should close when the overlay is clicked', async () => {
+  it('should close when the dialog backdrop is clicked', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -243,15 +248,14 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    const dialog = await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
     fixture.detectChanges();
 
-    const overlay = root.querySelector('[role="presentation"]') as HTMLElement;
-    overlay.click();
+    // Click the dialog element itself (backdrop / target === currentTarget).
+    dialog.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
-    expect(root.querySelector('#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
     http.verify();
   });
 
@@ -263,8 +267,7 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushApiVersion(http);
 
-    (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
+    await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([
       { title: '1.0.0', summary: 'Ship it' },
     ]);
@@ -276,7 +279,7 @@ describe('HandilyCommerceFrontend', () => {
       trapFocus: (event: KeyboardEvent) => void;
     };
 
-    const panel = root.querySelector('#changelog-dialog') as HTMLElement;
+    const panel = root.querySelector('dialog#changelog-dialog') as HTMLElement;
     const buttons = panel.querySelectorAll('button');
     expect(buttons.length).toBeGreaterThan(0);
     const first = buttons[0] as HTMLButtonElement;
