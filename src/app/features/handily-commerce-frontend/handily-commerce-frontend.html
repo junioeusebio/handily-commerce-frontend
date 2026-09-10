@@ -30,7 +30,7 @@
     id="changelog-dialog"
     aria-labelledby="changelog-title"
     aria-modal="true"
-    class="max-h-[min(80dvh,32rem)] w-full max-w-md overflow-auto rounded-lg border border-border bg-surface p-5 shadow-lg backdrop:bg-foreground/40"
+    class="fixed left-1/2 top-1/2 z-50 m-0 max-h-[min(80dvh,32rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border border-border bg-surface p-5 shadow-lg backdrop:bg-foreground/40"
     (click)="onDialogClick($event)"
     (keydown)="onDialogKeydown($event)"
     (cancel)="onDialogCancel($event)"
