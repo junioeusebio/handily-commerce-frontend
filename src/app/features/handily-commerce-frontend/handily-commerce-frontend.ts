@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   afterNextRender,
@@ -23,7 +24,7 @@ interface ApiVersionResponse {
 
 @Component({
   selector: 'app-handily-commerce-frontend',
-  imports: [],
+  imports: [NgOptimizedImage],
   templateUrl: './handily-commerce-frontend.html',
   styleUrl: './handily-commerce-frontend.scss',
 })
@@ -38,7 +39,6 @@ export class HandilyCommerceFrontend implements OnInit {
   private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeChangelogBtn');
   private readonly modalPanel = viewChild<ElementRef<HTMLDialogElement>>('changelogPanel');
 
-  protected readonly title = signal('Handily Commerce Frontend');
   protected readonly feVersion = APP_VERSION;
   /** `—` while loading, API version string on success, `erro` on failure. */
   protected readonly apiVersionLabel = signal('—');

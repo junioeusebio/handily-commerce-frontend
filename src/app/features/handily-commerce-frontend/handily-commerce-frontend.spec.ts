@@ -77,10 +77,8 @@ describe('HandilyCommerceFrontend', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce Frontend');
-    expect(compiled.querySelector('p')?.textContent).toContain(
-      'Angular Handily Commerce Frontend',
-    );
+    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce');
+    expect(compiled.querySelector('img[alt="Handily Commerce"]')).toBeTruthy();
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
     expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain("What's new");

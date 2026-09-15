@@ -38,7 +38,7 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render Handily Commerce Frontend', async () => {
+  it('should render Handily Commerce', async () => {
     const fixture = TestBed.createComponent(App);
     const http = TestBed.inject(HttpTestingController);
 
@@ -51,7 +51,7 @@ describe('App', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce Frontend');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce');
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
 
