@@ -44,8 +44,23 @@ describe('App', () => {
 
     fixture.detectChanges();
 
-    const req = http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`);
-    req.flush({ version: 'v1' });
+    const pending = http.match(
+      (r) =>
+        r.url === `${resolveApiRoot(testEnv)}/apiVersion` ||
+        r.url === `${resolveApiRoot(testEnv)}/ping`,
+    );
+    expect(pending.length).toBe(2);
+    for (const req of pending) {
+      if (req.request.url.endsWith('/apiVersion')) {
+        req.flush({ version: 'v1' });
+      } else {
+        req.flush({
+          service: 'handily-commerce-backend',
+          apiVersion: 'v1',
+          status: 'ok',
+        });
+      }
+    }
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -54,6 +69,7 @@ describe('App', () => {
     expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce');
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
+    expect(compiled.querySelector('.app-versions')?.textContent).toContain('· ok');
 
     http.verify();
   });

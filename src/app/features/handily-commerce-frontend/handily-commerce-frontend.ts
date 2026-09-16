@@ -1,5 +1,4 @@
 import { NgOptimizedImage } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import {
   afterNextRender,
   Component,
@@ -15,12 +14,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, retry } from 'rxjs';
 
-import { APP_ENVIRONMENT, APP_VERSION, resolveApiRoot } from '@core';
-import { ChangelogService, type ChangelogItem } from '@domains';
-
-interface ApiVersionResponse {
-  version: string;
-}
+import { APP_VERSION } from '@core';
+import { ApiStatusService, ChangelogService, type ChangelogItem } from '@domains';
 
 @Component({
   selector: 'app-handily-commerce-frontend',
@@ -29,8 +24,7 @@ interface ApiVersionResponse {
   styleUrl: './handily-commerce-frontend.scss',
 })
 export class HandilyCommerceFrontend implements OnInit {
-  private readonly http = inject(HttpClient);
-  private readonly env = inject(APP_ENVIRONMENT);
+  private readonly apiStatus = inject(ApiStatusService);
   private readonly changelogApi = inject(ChangelogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
@@ -42,6 +36,8 @@ export class HandilyCommerceFrontend implements OnInit {
   protected readonly feVersion = APP_VERSION;
   /** `—` while loading, API version string on success, `erro` on failure. */
   protected readonly apiVersionLabel = signal('—');
+  /** `—` while loading, `ok` when ping succeeds, `erro` on failure. */
+  protected readonly apiStatusLabel = signal('—');
 
   protected readonly changelogOpen = signal(false);
   /** `idle` until opened; then `loading` / `ok` / `error` (empty list is still `ok`). */
@@ -49,23 +45,8 @@ export class HandilyCommerceFrontend implements OnInit {
   protected readonly changelogItems = signal<ChangelogItem[]>([]);
 
   ngOnInit(): void {
-    const url = `${resolveApiRoot(this.env)}/apiVersion`;
-
-    this.http
-      .get<ApiVersionResponse>(url)
-      .pipe(
-        // Brief retries help with transient failures / Render free-tier cold starts.
-        retry({ count: 2 }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((body) => {
-        if (body?.version) {
-          this.apiVersionLabel.set(body.version);
-        } else {
-          this.apiVersionLabel.set('erro');
-        }
-      });
+    this.loadApiVersion();
+    this.loadPingStatus();
   }
 
   protected openChangelog(): void {
@@ -152,6 +133,41 @@ export class HandilyCommerceFrontend implements OnInit {
       event.preventDefault();
       first.focus();
     }
+  }
+
+  private loadApiVersion(): void {
+    this.apiStatus
+      .apiVersion()
+      .pipe(
+        // Brief retries help with transient failures / Render free-tier cold starts.
+        retry({ count: 2 }),
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((body) => {
+        if (body?.version) {
+          this.apiVersionLabel.set(body.version);
+        } else {
+          this.apiVersionLabel.set('erro');
+        }
+      });
+  }
+
+  private loadPingStatus(): void {
+    this.apiStatus
+      .ping()
+      .pipe(
+        retry({ count: 2 }),
+        catchError(() => of(null)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((body) => {
+        if (body?.status === 'ok') {
+          this.apiStatusLabel.set('ok');
+        } else {
+          this.apiStatusLabel.set('erro');
+        }
+      });
   }
 
   private loadChangelog(): void {
