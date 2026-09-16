@@ -44,6 +44,64 @@ describe('HandilyCommerceFrontend', () => {
     }
   }
 
+  function flushPing(
+    http: HttpTestingController,
+    body: { service: string; apiVersion: string; status: string } | null = {
+      service: 'handily-commerce-backend',
+      apiVersion: 'v1',
+      status: 'ok',
+    },
+  ): void {
+    const req = http.expectOne(`${resolveApiRoot(testEnv)}/ping`);
+    if (body) {
+      req.flush(body);
+    } else {
+      req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+    }
+  }
+
+  /** Matches ngOnInit: apiVersion + ping (order not guaranteed). */
+  function flushBootstrap(
+    http: HttpTestingController,
+    opts: {
+      version?: { version: string } | null;
+      ping?: { service: string; apiVersion: string; status: string } | null;
+    } = {},
+  ): void {
+    const versionBody = opts.version === undefined ? { version: 'v1' } : opts.version;
+    const pingBody =
+      opts.ping === undefined
+        ? {
+            service: 'handily-commerce-backend',
+            apiVersion: 'v1',
+            status: 'ok',
+          }
+        : opts.ping;
+
+    const pending = http.match(
+      (r) =>
+        r.url === `${resolveApiRoot(testEnv)}/apiVersion` ||
+        r.url === `${resolveApiRoot(testEnv)}/ping`,
+    );
+    expect(pending.length).toBe(2);
+
+    for (const req of pending) {
+      if (req.request.url.endsWith('/apiVersion')) {
+        if (versionBody) {
+          req.flush(versionBody);
+        } else {
+          req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+        }
+      } else {
+        if (pingBody) {
+          req.flush(pingBody);
+        } else {
+          req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+        }
+      }
+    }
+  }
+
   async function openChangelogModal(
     fixture: ReturnType<typeof TestBed.createComponent<HandilyCommerceFrontend>>,
     http: HttpTestingController,
@@ -63,15 +121,12 @@ describe('HandilyCommerceFrontend', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the title and WEB version footer', async () => {
+  it('should render the title, WEB version, API version, and ping status', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
 
     fixture.detectChanges();
-
-    const req = http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`);
-    expect(req.request.method).toBe('GET');
-    req.flush({ version: 'v1' });
+    flushBootstrap(http);
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -81,7 +136,10 @@ describe('HandilyCommerceFrontend', () => {
     expect(compiled.querySelector('img[alt="Handily Commerce"]')).toBeTruthy();
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
-    expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain("What's new");
+    expect(compiled.querySelector('.app-versions')?.textContent).toContain('· ok');
+    expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain(
+      "What's new",
+    );
 
     http.verify();
   });
@@ -92,11 +150,12 @@ describe('HandilyCommerceFrontend', () => {
 
     fixture.detectChanges();
 
-    // Initial request + 2 retries (retry count: 2)
+    // Initial request + 2 retries (retry count: 2) for apiVersion; ping succeeds once.
     for (let i = 0; i < 3; i++) {
       const req = http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`);
       req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
     }
+    flushPing(http);
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -107,16 +166,35 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should show loading dash before the response', () => {
+  it('should show erro when ping request fails', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
 
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.app-versions')?.textContent).toContain(
-      'API: —',
-    );
 
-    http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`).flush({ version: 'v1' });
+    flushApiVersion(http);
+    for (let i = 0; i < 3; i++) {
+      const req = http.expectOne(`${resolveApiRoot(testEnv)}/ping`);
+      req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
+    }
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.app-versions')?.textContent).toContain('· erro');
+    http.verify();
+  });
+
+  it('should show loading dashes before the responses', () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+
+    fixture.detectChanges();
+    const text = fixture.nativeElement.querySelector('.app-versions')?.textContent ?? '';
+    expect(text).toContain('API: —');
+    expect(text).toContain('· —');
+
+    flushBootstrap(http);
     http.verify();
   });
 
@@ -126,7 +204,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     await openChangelogModal(fixture, http);
 
@@ -158,7 +236,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     await openChangelogModal(fixture, http);
 
@@ -180,7 +258,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
@@ -208,7 +286,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
@@ -225,7 +303,7 @@ describe('HandilyCommerceFrontend', () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     const component = fixture.componentInstance as unknown as {
       onDocumentKeydown: (event: KeyboardEvent) => void;
@@ -244,7 +322,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     const dialog = await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
@@ -263,7 +341,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     let dialog = await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
@@ -294,7 +372,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushApiVersion(http);
+    flushBootstrap(http);
 
     await openChangelogModal(fixture, http);
     http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([
@@ -340,5 +418,4 @@ describe('HandilyCommerceFrontend', () => {
 
     http.verify();
   });
-
 });
