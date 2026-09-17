@@ -1,26 +1,33 @@
 <main
-  class="handily-commerce-frontend flex min-h-dvh flex-col items-center justify-center gap-2 p-5"
+  class="handily-commerce-frontend flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-12 md:px-8"
 >
-  <img
-    ngSrc="logo.webp"
-    width="96"
-    height="96"
-    alt="Handily Commerce"
-    priority
-    class="h-24 w-24 rounded-full object-cover shadow-md"
-  />
-  <h1 class="m-0 text-3xl font-semibold leading-tight text-foreground">
-    Handily Commerce
-  </h1>
+  <header class="flex flex-col items-center gap-3 text-center sm:gap-4">
+    <img
+      ngSrc="logo.webp"
+      width="96"
+      height="96"
+      alt="Handily Commerce"
+      priority
+      class="h-20 w-20 rounded-full object-cover shadow-md sm:h-24 sm:w-24"
+    />
+    <h1
+      class="m-0 text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl"
+    >
+      Handily Commerce
+    </h1>
+  </header>
+
   <footer
-    class="app-versions mt-5 flex flex-wrap items-center justify-center gap-3 rounded-md border border-border bg-surface px-4 py-2 text-sm text-subtle tabular-nums"
+    class="app-versions flex w-full max-w-md flex-col items-stretch gap-3 rounded-md border border-border bg-surface px-3 py-3 text-sm text-subtle tabular-nums sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-3 sm:px-4 sm:py-2"
     aria-label="Versões WEB e API"
   >
-    <span>WEB: {{ feVersion }} | API: {{ apiVersionLabel() }} · {{ apiStatusLabel() }}</span>
+    <span class="text-center leading-relaxed sm:text-left">
+      WEB: {{ feVersion }} | API: {{ apiVersionLabel() }} · {{ apiStatusLabel() }}
+    </span>
     <button
       #openChangelogBtn
       type="button"
-      class="rounded-md border border-border bg-primary-soft px-3 py-1 text-sm font-medium text-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      class="rounded-md border border-border bg-primary-soft px-3 py-2 text-sm font-medium text-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-1"
       aria-haspopup="dialog"
       [attr.aria-expanded]="changelogOpen()"
       aria-controls="changelog-dialog"
