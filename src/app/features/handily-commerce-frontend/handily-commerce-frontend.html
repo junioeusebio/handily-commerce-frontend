@@ -1,84 +1,470 @@
-<main
-  class="handily-commerce-frontend flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-12 md:px-8"
->
-  <header class="flex flex-col items-center gap-3 text-center sm:gap-4">
-    <img
-      ngSrc="assets/img/logo.webp"
-      width="96"
-      height="96"
-      alt="Handily Commerce"
-      priority
-      class="h-20 w-20 rounded-full object-cover shadow-md sm:h-24 sm:w-24"
-    />
-    <h1
-      class="m-0 text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl"
+<div class="handily-home min-h-dvh bg-white text-[#0b1f3a]">
+  <header
+    class="sticky top-0 z-40 border-b border-white/10 bg-[#07111f]/[0.92] text-white backdrop-blur-[10px]"
+  >
+    <div
+      class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-[0.7rem] sm:px-6"
     >
-      Handily Commerce
-    </h1>
+      <a class="flex items-center gap-[0.7rem] text-inherit no-underline" href="#">
+        <img
+          ngSrc="assets/img/logo.webp"
+          width="40"
+          height="40"
+          alt="Handily"
+          priority
+          class="h-10 w-10 rounded-full object-cover shadow-[0_0_0_2px_rgba(255,255,255,0.15)]"
+        />
+        <span class="leading-tight">
+          <strong class="block text-base tracking-[0.01em]">Handily</strong>
+          <small
+            class="block text-[0.65rem] uppercase tracking-[0.06em] text-white/55"
+            >Software · municípios</small
+          >
+        </span>
+      </a>
+      <nav class="hidden gap-[1.4rem] text-sm text-white/78 md:flex" aria-label="Principal">
+        <a class="hover:text-white" href="#solucoes">Soluções</a>
+        <a class="hover:text-white" href="#bncc">BNCC</a>
+        <a class="hover:text-white" href="#depoimentos">Clientes</a>
+        <a class="hover:text-white" href="#faq">FAQ</a>
+      </nav>
+      <button
+        #openLeadBtn
+        type="button"
+        class="inline-flex items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="leadOpen()"
+        aria-controls="lead-dialog"
+        (click)="openLead($event)"
+      >
+        Solicitar orçamento
+      </button>
+    </div>
   </header>
 
-  <footer
-    class="app-versions flex w-full max-w-md flex-col items-stretch gap-3 rounded-md border border-border bg-surface px-3 py-3 text-sm text-subtle tabular-nums sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-3 sm:px-4 sm:py-2"
-    aria-label="Versões WEB e API"
-  >
-    <span class="text-center leading-relaxed sm:text-left">
-      WEB: {{ feVersion }} | API: {{ apiVersionLabel() }} · {{ apiStatusLabel() }}
-    </span>
-    <button
-      #openChangelogBtn
-      type="button"
-      class="rounded-md border border-border bg-primary-soft px-3 py-2 text-sm font-medium text-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-1"
-      aria-haspopup="dialog"
-      [attr.aria-expanded]="changelogOpen()"
-      aria-controls="changelog-dialog"
-      (click)="openChangelog()"
+  <main>
+    <section
+      class="relative overflow-hidden bg-[radial-gradient(1200px_500px_at_80%_20%,rgba(30,91,184,0.45),transparent_55%),linear-gradient(160deg,#07111f_0%,#0c1c33_55%,#123a6b_100%)] text-white"
     >
-      What's new
-    </button>
-  </footer>
-</main>
+      <div
+        class="pointer-events-none absolute inset-x-[-10%] bottom-[-30%] left-[40%] h-[70%] bg-[radial-gradient(circle_at_30%_40%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_70%_60%,rgba(249,115,22,0.15),transparent_50%)]"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="relative z-[1] mx-auto grid max-w-6xl gap-8 px-5 py-[3.25rem] sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-[4.5rem]"
+      >
+        <div>
+          <p
+            class="mb-4 inline-flex items-center gap-1 text-xs uppercase tracking-[0.08em] text-white/70"
+          >
+            Handily
+          </p>
+          <h1
+            class="m-0 text-[clamp(1.85rem,4.2vw,3.15rem)] font-extrabold uppercase leading-[1.08] tracking-[0.02em]"
+          >
+            Tecnologia e formação para municípios na BNCC Computação
+          </h1>
+          <p class="mt-[1.15rem] max-w-xl text-[1.05rem] leading-relaxed text-white/82">
+            A Handily une desenvolvimento de sistemas e administração para capacitar redes
+            municipais em Pensamento Computacional, Mundo Digital e Cultura Digital — com cursos e
+            soluções até 2026/2027.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="inline-flex items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
+              (click)="openLead($event)"
+            >
+              Solicitar orçamento
+            </button>
+            <a
+              class="inline-flex items-center justify-center rounded-full border border-white/45 bg-transparent px-[1.15rem] py-[0.6rem] text-sm font-bold text-white no-underline"
+              href="#solucoes"
+              >Ver soluções</a
+            >
+          </div>
+        </div>
+        <aside
+          class="relative min-h-64 overflow-hidden rounded-[1.25rem] border border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5"
+          aria-label="Em destaque"
+        >
+          <span
+            class="absolute right-4 top-4 rounded-full border border-[#f97316]/45 bg-[#f97316]/20 px-[0.55rem] py-1 text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#fdba74]"
+            >GovTech</span
+          >
+          <h2 class="m-0 text-[0.7rem] uppercase tracking-[0.1em] text-white/55">Em destaque</h2>
+          <ul class="mt-4 grid list-none gap-[0.65rem] p-0">
+            <li
+              class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+            >
+              <span
+                class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+                aria-hidden="true"
+              ></span>
+              <div>
+                <strong class="block text-sm">Cursos BNCC para prefeituras</strong>
+                <span class="mt-0.5 block text-xs text-white/65"
+                  >Formação nos três eixos da BNCC Computação.</span
+                >
+              </div>
+            </li>
+            <li
+              class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+            >
+              <span
+                class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+                aria-hidden="true"
+              ></span>
+              <div>
+                <strong class="block text-sm">Sistemas para educação municipal</strong>
+                <span class="mt-0.5 block text-xs text-white/65"
+                  >Software para processos e gestão escolar.</span
+                >
+              </div>
+            </li>
+            <li
+              class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+            >
+              <span
+                class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+                aria-hidden="true"
+              ></span>
+              <div>
+                <strong class="block text-sm">Consultoria de implantação</strong>
+                <span class="mt-0.5 block text-xs text-white/65"
+                  >Administração e acompanhamento até 2026/2027.</span
+                >
+              </div>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
 
-@if (changelogOpen()) {
+    <section id="solucoes" class="bg-[#f3f6fa] py-12">
+      <div class="mx-auto max-w-6xl px-5 sm:px-6">
+        <div
+          class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+        >
+          <div>
+            <h2 class="m-0 text-[clamp(1.4rem,2.5vw,1.85rem)] tracking-tight">
+              Principais soluções em ação
+            </h2>
+            <p class="mt-[0.55rem] max-w-xl text-[0.95rem] text-[#5b6b7c]">
+              Hub de ofertas para municípios — eixos BNCC e pilares Handily.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="border-0 bg-transparent p-0 text-sm font-bold text-[#1e5bb8] cursor-pointer"
+            (click)="openLead($event)"
+          >
+            Solicitar orçamento →
+          </button>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_10px_28px_rgba(7,17,31,0.06)]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#e8f1fb] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#1e5bb8]"
+              >Curso</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Pensamento Computacional</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Algoritmos, lógica e resolução de problemas para a rede municipal.
+            </p>
+            <button
+              type="button"
+              class="mt-4 border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8] cursor-pointer"
+              (click)="openLead($event)"
+            >
+              Saiba mais
+            </button>
+          </article>
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_10px_28px_rgba(7,17,31,0.06)]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#e8f1fb] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#1e5bb8]"
+              >Curso</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Mundo Digital</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Tecnologias, dados e infraestrutura para escola e secretaria.
+            </p>
+            <button
+              type="button"
+              class="mt-4 border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8] cursor-pointer"
+              (click)="openLead($event)"
+            >
+              Saiba mais
+            </button>
+          </article>
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_10px_28px_rgba(7,17,31,0.06)]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#e8f1fb] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#1e5bb8]"
+              >Curso</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Cultura Digital</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Cidadania, ética e uso crítico das tecnologias na comunidade escolar.
+            </p>
+            <button
+              type="button"
+              class="mt-4 border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8] cursor-pointer"
+              (click)="openLead($event)"
+            >
+              Saiba mais
+            </button>
+          </article>
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_10px_28px_rgba(7,17,31,0.06)]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#ecfdf5] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#0f766e]"
+              >Software</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Desenvolvimento de sistemas</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Soluções e automação para educação e gestão municipal.
+            </p>
+            <button
+              type="button"
+              class="mt-4 border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8] cursor-pointer"
+              (click)="openLead($event)"
+            >
+              Saiba mais
+            </button>
+          </article>
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_10px_28px_rgba(7,17,31,0.06)]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#ecfdf5] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#0f766e]"
+              >Administração</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Gestão e processos</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Capacitação para implantar a BNCC com clareza operacional.
+            </p>
+            <button
+              type="button"
+              class="mt-4 border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8] cursor-pointer"
+              (click)="openLead($event)"
+            >
+              Saiba mais
+            </button>
+          </article>
+          <article
+            class="flex min-h-[11.5rem] flex-col rounded-2xl border border-dashed border-[#1e5bb8]/35 bg-[linear-gradient(180deg,#fff,#e8f1fb)] p-[1.2rem]"
+          >
+            <span
+              class="inline-flex w-fit rounded-full bg-[#fff7ed] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#ea580c]"
+              >Combo</span
+            >
+            <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">Pacote município BNCC</h3>
+            <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+              Cursos + consultoria + software. Catálogo detalhado em H4.
+            </p>
+            <button
+              type="button"
+              class="mt-4 inline-flex w-fit items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c]"
+              (click)="openLead($event)"
+            >
+              Quero uma proposta
+            </button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="bncc" class="bg-[linear-gradient(90deg,#0c1c33,#123a6b)] text-white">
+      <div
+        class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-9 sm:px-6 md:flex-row md:items-center md:justify-between md:py-10"
+      >
+        <div>
+          <h2 class="m-0 text-[1.4rem]">Por que agir até 2026/2027</h2>
+          <p class="mt-[0.45rem] max-w-xl text-[0.95rem] text-white/80">
+            Milhares de municípios precisam investir em formação e sistemas. Fale com a Handily e
+            modernize a gestão educacional da sua cidade.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c]"
+          (click)="openLead($event)"
+        >
+          Fale conosco
+        </button>
+      </div>
+    </section>
+
+    <section id="depoimentos" class="py-12">
+      <div class="mx-auto max-w-6xl px-5 sm:px-6">
+        <h2 class="m-0 text-[clamp(1.4rem,2.5vw,1.85rem)] tracking-tight">
+          Confira o que nossos clientes dizem
+        </h2>
+        <p class="mt-[0.55rem] mb-[1.35rem] max-w-xl text-[0.95rem] text-[#5b6b7c]">
+          Depoimentos de referência — conteúdo real entra depois.
+        </p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <blockquote
+            class="m-0 rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_8px_20px_rgba(7,17,31,0.04)]"
+          >
+            <p class="m-0 text-[0.9rem] leading-relaxed">
+              “Precisamos de parceiro que una curso BNCC e sistema — a Handily fala a língua da
+              prefeitura.”
+            </p>
+            <footer class="mt-[0.9rem] text-xs text-[#5b6b7c]">Secretaria municipal · (exemplo)</footer>
+          </blockquote>
+          <blockquote
+            class="m-0 rounded-2xl border border-[#d7e0ec] bg-white p-[1.2rem] shadow-[0_8px_20px_rgba(7,17,31,0.04)]"
+          >
+            <p class="m-0 text-[0.9rem] leading-relaxed">
+              “Formação nos três eixos e apoio em processos administrativos no mesmo hub.”
+            </p>
+            <footer class="mt-[0.9rem] text-xs text-[#5b6b7c]">Gestão educacional · (exemplo)</footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="bg-[#f3f6fa] py-12">
+      <div class="mx-auto max-w-6xl px-5 sm:px-6">
+        <h2 class="m-0 text-[clamp(1.4rem,2.5vw,1.85rem)] tracking-tight">A gente responde</h2>
+        <details class="mt-[0.7rem] rounded-[0.85rem] border border-[#d7e0ec] bg-white px-4 py-[0.8rem]" open>
+          <summary class="cursor-pointer text-sm font-bold">O que é a Handily?</summary>
+          <p class="mt-2 mb-0 text-sm text-[#5b6b7c]">
+            Hub de soluções digitais para municípios: cursos BNCC Computação, software e
+            administração.
+          </p>
+        </details>
+        <details class="mt-[0.7rem] rounded-[0.85rem] border border-[#d7e0ec] bg-white px-4 py-[0.8rem]">
+          <summary class="cursor-pointer text-sm font-bold">Para quem é?</summary>
+          <p class="mt-2 mb-0 text-sm text-[#5b6b7c]">
+            Prefeituras e secretarias que precisam implantar a BNCC Computação até 2026/2027.
+          </p>
+        </details>
+        <details class="mt-[0.7rem] rounded-[0.85rem] border border-[#d7e0ec] bg-white px-4 py-[0.8rem]">
+          <summary class="cursor-pointer text-sm font-bold">Como contratar?</summary>
+          <p class="mt-2 mb-0 text-sm text-[#5b6b7c]">
+            Clique em Solicitar orçamento, preencha nome, contato e solicitação. O envio abre o
+            e-mail para ajksys@protonmail.com.
+          </p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site bg-[#07111f] text-white" id="contato">
+    <div
+      class="mx-auto grid max-w-6xl gap-7 px-5 py-9 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr]"
+    >
+      <div>
+        <p class="m-0 text-[1.1rem] font-bold">Handily</p>
+        <p class="mt-[0.45rem] mb-0 text-sm text-white/70">
+          Software · Administração · BNCC para municípios
+        </p>
+      </div>
+      <div>
+        <p class="m-0 text-[0.65rem] uppercase tracking-[0.1em] text-white/45">Contato</p>
+        <p class="mt-[0.45rem] mb-0 text-sm">
+          <a class="text-white/90 no-underline" href="mailto:ajksys@protonmail.com"
+            >ajksys@protonmail.com</a
+          >
+        </p>
+      </div>
+      <div>
+        <p class="m-0 text-[0.65rem] uppercase tracking-[0.1em] text-white/45">Orçamento</p>
+        <button
+          type="button"
+          class="mt-[0.7rem] inline-flex items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c]"
+          (click)="openLead($event)"
+        >
+          Solicitar orçamento
+        </button>
+      </div>
+    </div>
+    <div
+      class="app-versions border-t border-white/10 px-5 py-4 text-[0.72rem] text-white/45 tabular-nums sm:px-6"
+    >
+      <div class="mx-auto max-w-6xl">
+        © COPYRIGHT 2026 AJKSys Consulting · WEB: {{ feVersion }} | API:
+        {{ apiVersionLabel() }} · {{ apiStatusLabel() }}
+      </div>
+    </div>
+  </footer>
+</div>
+
+@if (leadOpen()) {
   <dialog
-    #changelogPanel
-    id="changelog-dialog"
-    aria-labelledby="changelog-title"
+    #leadDialog
+    id="lead-dialog"
+    aria-labelledby="lead-title"
     aria-modal="true"
-    class="fixed left-1/2 top-1/2 z-50 m-0 max-h-[min(80dvh,32rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border border-border bg-surface p-5 shadow-lg backdrop:bg-foreground/40"
+    class="fixed left-1/2 top-1/2 z-50 m-0 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-2xl border-0 bg-white p-0 shadow-[0_24px_60px_rgba(7,17,31,0.35)] backdrop:bg-[#07111f]/55"
     (click)="onDialogClick($event)"
     (keydown)="onDialogKeydown($event)"
     (cancel)="onDialogCancel($event)"
   >
-    <div class="mb-4 flex items-start justify-between gap-3">
-      <h2 id="changelog-title" class="m-0 text-lg font-semibold text-foreground">
-        What's new
+    <form class="px-[1.35rem] pb-[1.4rem] pt-5" (submit)="onLeadSubmit($event)">
+      <h2 id="lead-title" class="m-0 text-[1.15rem] font-semibold text-[#0b1f3a]">
+        Solicitar orçamento
       </h2>
-      <button
-        #closeChangelogBtn
-        type="button"
-        class="rounded-md border border-border bg-background px-2 py-1 text-sm text-muted transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        aria-label="Close what's new"
-        (click)="closeChangelog()"
-      >
-        Close
-      </button>
-    </div>
-
-    @if (changelogStatus() === 'loading') {
-      <p class="m-0 text-sm text-subtle tabular-nums" aria-live="polite">—</p>
-    } @else if (changelogStatus() === 'error') {
-      <p class="m-0 text-sm text-muted" role="alert">erro</p>
-    } @else if (changelogItems().length === 0) {
-      <p class="m-0 text-sm text-muted">No release notes yet.</p>
-    } @else {
-      <ul class="m-0 flex list-none flex-col gap-3 p-0">
-        @for (item of changelogItems(); track item.title) {
-          <li class="rounded-md border border-border bg-background px-3 py-2">
-            <h3 class="m-0 text-base font-medium text-foreground">{{ item.title }}</h3>
-            <p class="mt-1 mb-0 text-sm text-muted">{{ item.summary }}</p>
-          </li>
-        }
-      </ul>
-    }
+      <p class="mt-[0.4rem] mb-4 text-xs text-[#5b6b7c]">
+        Envia para <strong>ajksys&#64;protonmail.com</strong> pelo seu cliente de e-mail.
+      </p>
+      <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+        <label class="text-xs font-semibold" for="lead-nome">Nome</label>
+        <input
+          #nomeInput
+          id="lead-nome"
+          name="nome"
+          required
+          autocomplete="name"
+          placeholder="Seu nome"
+          class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        />
+      </div>
+      <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+        <label class="text-xs font-semibold" for="lead-contato">Contato</label>
+        <input
+          id="lead-contato"
+          name="contato"
+          required
+          autocomplete="email"
+          placeholder="E-mail ou telefone"
+          class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        />
+      </div>
+      <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+        <label class="text-xs font-semibold" for="lead-solicitacao">Solicitação</label>
+        <textarea
+          id="lead-solicitacao"
+          name="solicitacao"
+          required
+          placeholder="Município, curso ou necessidade"
+          class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        ></textarea>
+      </div>
+      <div class="mt-1 flex justify-end gap-[0.6rem]">
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-full border border-[#d7e0ec] bg-white px-[1.15rem] py-[0.6rem] text-sm font-bold text-[#0c1c33]"
+          (click)="closeLead()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="inline-flex items-center justify-center rounded-full bg-[#f97316] px-[1.15rem] py-[0.6rem] text-sm font-bold text-white transition hover:bg-[#ea580c]"
+        >
+          Enviar
+        </button>
+      </div>
+    </form>
   </dialog>
 }

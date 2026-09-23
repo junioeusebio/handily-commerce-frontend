@@ -15,7 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, retry } from 'rxjs';
 
 import { APP_VERSION } from '@core';
-import { ApiStatusService, ChangelogService, type ChangelogItem } from '@domains';
+import { ApiStatusService } from '@domains';
 
 @Component({
   selector: 'app-handily-commerce-frontend',
@@ -25,49 +25,67 @@ import { ApiStatusService, ChangelogService, type ChangelogItem } from '@domains
 })
 export class HandilyCommerceFrontend implements OnInit {
   private readonly apiStatus = inject(ApiStatusService);
-  private readonly changelogApi = inject(ChangelogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
 
-  private readonly openButton = viewChild<ElementRef<HTMLButtonElement>>('openChangelogBtn');
-  private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeChangelogBtn');
-  private readonly modalPanel = viewChild<ElementRef<HTMLDialogElement>>('changelogPanel');
+  private readonly leadDialog = viewChild<ElementRef<HTMLDialogElement>>('leadDialog');
+  private readonly nomeInput = viewChild<ElementRef<HTMLInputElement>>('nomeInput');
+  private leadTrigger: HTMLElement | null = null;
 
   protected readonly feVersion = APP_VERSION;
   /** `—` while loading, API version string on success, `erro` on failure. */
   protected readonly apiVersionLabel = signal('—');
   /** `—` while loading, `ok` when ping succeeds, `erro` on failure. */
   protected readonly apiStatusLabel = signal('—');
+  protected readonly leadOpen = signal(false);
 
-  protected readonly changelogOpen = signal(false);
-  /** `idle` until opened; then `loading` / `ok` / `error` (empty list is still `ok`). */
-  protected readonly changelogStatus = signal<'idle' | 'loading' | 'ok' | 'error'>('idle');
-  protected readonly changelogItems = signal<ChangelogItem[]>([]);
+  protected readonly contactEmail = 'ajksys@protonmail.com';
 
   ngOnInit(): void {
     this.loadApiVersion();
     this.loadPingStatus();
   }
 
-  protected openChangelog(): void {
-    this.changelogOpen.set(true);
-    this.loadChangelog();
+  protected openLead(event?: Event): void {
+    const target = event?.currentTarget;
+    this.leadTrigger = target instanceof HTMLElement ? target : null;
+    this.leadOpen.set(true);
     afterNextRender(
       () => {
-        this.modalPanel()?.nativeElement.showModal();
-        this.closeButton()?.nativeElement.focus();
+        this.leadDialog()?.nativeElement.showModal();
+        this.nomeInput()?.nativeElement.focus();
       },
       { injector: this.injector },
     );
   }
 
-  protected closeChangelog(): void {
-    const dialog = this.modalPanel()?.nativeElement;
+  protected closeLead(): void {
+    const dialog = this.leadDialog()?.nativeElement;
     if (dialog?.open) {
       dialog.close();
     }
-    this.changelogOpen.set(false);
-    queueMicrotask(() => this.openButton()?.nativeElement.focus());
+    this.leadOpen.set(false);
+    const trigger = this.leadTrigger;
+    this.leadTrigger = null;
+    queueMicrotask(() => trigger?.focus());
+  }
+
+  protected onLeadSubmit(event: Event): void {
+    event.preventDefault();
+    const form = event.target as HTMLFormElement;
+    const data = new FormData(form);
+    const nome = String(data.get('nome') ?? '').trim();
+    const contato = String(data.get('contato') ?? '').trim();
+    const solicitacao = String(data.get('solicitacao') ?? '').trim();
+    if (!nome || !contato || !solicitacao) {
+      return;
+    }
+    const subject = encodeURIComponent(`Orçamento Handily — ${nome}`);
+    const body = encodeURIComponent(
+      `Nome: ${nome}\nContato: ${contato}\n\nSolicitação:\n${solicitacao}`,
+    );
+    window.location.href = `mailto:${this.contactEmail}?subject=${subject}&body=${body}`;
+    this.closeLead();
   }
 
   /** Backdrop dismiss: interaction on the dialog itself (not its children). */
@@ -86,24 +104,24 @@ export class HandilyCommerceFrontend implements OnInit {
 
   private dismissIfBackdrop(event: Event): void {
     if (event.target === event.currentTarget) {
-      this.closeChangelog();
+      this.closeLead();
     }
   }
 
   /** Escape: keep Angular state in sync with the native dialog. */
   protected onDialogCancel(event: Event): void {
     event.preventDefault();
-    this.closeChangelog();
+    this.closeLead();
   }
 
   @HostListener('document:keydown', ['$event'])
   protected onDocumentKeydown(event: KeyboardEvent): void {
-    if (!this.changelogOpen()) {
+    if (!this.leadOpen()) {
       return;
     }
     if (event.key === 'Escape') {
       event.preventDefault();
-      this.closeChangelog();
+      this.closeLead();
       return;
     }
     if (event.key === 'Tab') {
@@ -112,7 +130,7 @@ export class HandilyCommerceFrontend implements OnInit {
   }
 
   private trapFocus(event: KeyboardEvent): void {
-    const panel = this.modalPanel()?.nativeElement;
+    const panel = this.leadDialog()?.nativeElement;
     if (!panel) {
       return;
     }
@@ -139,7 +157,6 @@ export class HandilyCommerceFrontend implements OnInit {
     this.apiStatus
       .apiVersion()
       .pipe(
-        // Brief retries help with transient failures / Render free-tier cold starts.
         retry({ count: 2 }),
         catchError(() => of(null)),
         takeUntilDestroyed(this.destroyRef),
@@ -166,28 +183,6 @@ export class HandilyCommerceFrontend implements OnInit {
           this.apiStatusLabel.set('ok');
         } else {
           this.apiStatusLabel.set('erro');
-        }
-      });
-  }
-
-  private loadChangelog(): void {
-    this.changelogStatus.set('loading');
-    this.changelogItems.set([]);
-
-    this.changelogApi
-      .list()
-      .pipe(
-        retry({ count: 2 }),
-        catchError(() => of(null)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((items) => {
-        if (items) {
-          this.changelogItems.set(items);
-          this.changelogStatus.set('ok');
-        } else {
-          this.changelogItems.set([]);
-          this.changelogStatus.set('error');
         }
       });
   }

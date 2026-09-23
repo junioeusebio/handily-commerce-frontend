@@ -102,16 +102,15 @@ describe('HandilyCommerceFrontend', () => {
     }
   }
 
-  async function openChangelogModal(
+  async function openLeadModal(
     fixture: ReturnType<typeof TestBed.createComponent<HandilyCommerceFrontend>>,
-    http: HttpTestingController,
   ): Promise<HTMLDialogElement> {
     const root = fixture.nativeElement as HTMLElement;
     (root.querySelector('button[aria-haspopup="dialog"]') as HTMLButtonElement).click();
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
-    const dialog = root.querySelector('dialog#changelog-dialog') as HTMLDialogElement;
+    const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
     expect(dialog).toBeTruthy();
     return dialog;
   }
@@ -121,7 +120,7 @@ describe('HandilyCommerceFrontend', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the title, WEB version, API version, and ping status', async () => {
+  it('should render Handily institutional home, WEB version, API version, and ping status', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
 
@@ -132,14 +131,26 @@ describe('HandilyCommerceFrontend', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce');
-    expect(compiled.querySelector('img[alt="Handily Commerce"]')).toBeTruthy();
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Tecnologia e formação para municípios na BNCC Computação',
+    );
+    expect(compiled.textContent).toContain('Software · municípios');
+    expect(compiled.querySelector('img[alt="Handily"]')).toBeTruthy();
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('· ok');
-    expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain(
-      "What's new",
+    expect(compiled.querySelector('.app-versions')?.textContent).toContain(
+      '© COPYRIGHT 2026 AJKSys Consulting',
     );
+    expect(compiled.querySelector('button[aria-haspopup="dialog"]')?.textContent).toContain(
+      'Solicitar orçamento',
+    );
+    expect(compiled.textContent).toContain('ajksys@protonmail.com');
+    expect(compiled.textContent?.toLowerCase()).not.toContain("what's new");
+    expect(compiled.textContent?.toLowerCase()).not.toContain('prévia');
+    expect(compiled.textContent?.toLowerCase()).not.toContain('store');
+    expect(compiled.textContent?.toLowerCase()).not.toContain('inspirado em prodam');
+    expect(compiled.textContent).not.toContain('handily-commerce-frontend');
 
     http.verify();
   });
@@ -150,7 +161,6 @@ describe('HandilyCommerceFrontend', () => {
 
     fixture.detectChanges();
 
-    // Initial request + 2 retries (retry count: 2) for apiVersion; ping succeeds once.
     for (let i = 0; i < 3; i++) {
       const req = http.expectOne(`${resolveApiRoot(testEnv)}/apiVersion`);
       req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
@@ -198,7 +208,7 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should open the changelog modal and list items', async () => {
+  it('should open the lead dialog with Nome, Contato, and Solicitação fields', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -206,31 +216,20 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushBootstrap(http);
 
-    await openChangelogModal(fixture, http);
+    await openLeadModal(fixture);
 
-    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain('—');
-
-    const changelogReq = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
-    expect(changelogReq.request.method).toBe('GET');
-    changelogReq.flush([
-      { title: '0.4.0', summary: "What's new modal" },
-      { title: '0.3.0', summary: 'Prior release' },
-    ]);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    const dialog = root.querySelector('dialog#changelog-dialog') as HTMLDialogElement;
-    expect(dialog?.textContent).toContain('0.4.0');
-    expect(dialog?.textContent).toContain("What's new modal");
-    expect(dialog?.textContent).toContain('0.3.0');
-    expect(dialog?.tagName).toBe('DIALOG');
+    const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
+    expect(dialog?.textContent).toContain('Solicitar orçamento');
+    expect(dialog?.querySelector('#lead-nome')).toBeTruthy();
+    expect(dialog?.querySelector('#lead-contato')).toBeTruthy();
+    expect(dialog?.querySelector('#lead-solicitacao')).toBeTruthy();
     expect(dialog?.getAttribute('aria-modal')).toBe('true');
+    expect(dialog?.textContent).toContain('ajksys@protonmail.com');
 
     http.verify();
   });
 
-  it('should show erro in the modal when changelog request fails', async () => {
+  it('should close the lead dialog on Escape and via Cancel', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -238,68 +237,25 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushBootstrap(http);
 
-    await openChangelogModal(fixture, http);
-
-    for (let i = 0; i < 3; i++) {
-      const req = http.expectOne(`${resolveApiRoot(testEnv)}/changelog`);
-      req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
-    }
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain('erro');
-    http.verify();
-  });
-
-  it('should close the modal on Escape and via the close button', async () => {
-    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
-    const http = TestBed.inject(HttpTestingController);
-    const root = fixture.nativeElement as HTMLElement;
-
-    fixture.detectChanges();
-    flushBootstrap(http);
-
-    await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
-    fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeTruthy();
+    await openLeadModal(fixture);
+    expect(root.querySelector('dialog#lead-dialog')).toBeTruthy();
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
 
-    await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
+    await openLeadModal(fixture);
+    const cancel = Array.from(root.querySelectorAll('dialog#lead-dialog button')).find((b) =>
+      (b.textContent ?? '').includes('Cancelar'),
+    ) as HTMLButtonElement;
+    cancel.click();
     fixture.detectChanges();
-
-    (root.querySelector('button[aria-label="Close what\'s new"]') as HTMLButtonElement).click();
-    fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
 
     http.verify();
   });
 
-  it('should show empty copy when changelog returns []', async () => {
-    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
-    const http = TestBed.inject(HttpTestingController);
-    const root = fixture.nativeElement as HTMLElement;
-
-    fixture.detectChanges();
-    flushBootstrap(http);
-
-    await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(root.querySelector('dialog#changelog-dialog')?.textContent).toContain(
-      'No release notes yet.',
-    );
-    http.verify();
-  });
-
-  it('should ignore keyboard handling when the modal is closed', () => {
+  it('should ignore keyboard handling when the lead dialog is closed', () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
@@ -307,12 +263,12 @@ describe('HandilyCommerceFrontend', () => {
 
     const component = fixture.componentInstance as unknown as {
       onDocumentKeydown: (event: KeyboardEvent) => void;
-      changelogOpen: { (): boolean };
+      leadOpen: { (): boolean };
     };
-    expect(component.changelogOpen()).toBe(false);
+    expect(component.leadOpen()).toBe(false);
     component.onDocumentKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
     component.onDocumentKeydown(new KeyboardEvent('keydown', { key: 'Tab' }));
-    expect(component.changelogOpen()).toBe(false);
+    expect(component.leadOpen()).toBe(false);
     http.verify();
   });
 
@@ -324,14 +280,10 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushBootstrap(http);
 
-    const dialog = await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
-    fixture.detectChanges();
-
-    // Click the dialog element itself (backdrop / target === currentTarget).
+    const dialog = await openLeadModal(fixture);
     dialog.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
     http.verify();
   });
 
@@ -343,30 +295,24 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushBootstrap(http);
 
-    let dialog = await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
-    fixture.detectChanges();
-
+    let dialog = await openLeadModal(fixture);
     dialog.dispatchEvent(
       new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
     );
     fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
 
-    dialog = await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([]);
-    fixture.detectChanges();
-
+    dialog = await openLeadModal(fixture);
     dialog.dispatchEvent(
       new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }),
     );
     fixture.detectChanges();
-    expect(root.querySelector('dialog#changelog-dialog')).toBeFalsy();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
 
     http.verify();
   });
 
-  it('should trap Tab focus inside the open modal', async () => {
+  it('should trap Tab focus inside the open lead dialog', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -374,27 +320,22 @@ describe('HandilyCommerceFrontend', () => {
     fixture.detectChanges();
     flushBootstrap(http);
 
-    await openChangelogModal(fixture, http);
-    http.expectOne(`${resolveApiRoot(testEnv)}/changelog`).flush([
-      { title: '1.0.0', summary: 'Ship it' },
-    ]);
-    fixture.detectChanges();
-    await fixture.whenStable();
+    await openLeadModal(fixture);
 
     const component = fixture.componentInstance as unknown as {
       onDocumentKeydown: (event: KeyboardEvent) => void;
-      trapFocus: (event: KeyboardEvent) => void;
     };
 
-    const panel = root.querySelector('dialog#changelog-dialog') as HTMLElement;
-    const buttons = panel.querySelectorAll('button');
-    expect(buttons.length).toBeGreaterThan(0);
-    const first = buttons[0] as HTMLButtonElement;
-    const last = buttons[buttons.length - 1] as HTMLButtonElement;
+    const panel = root.querySelector('dialog#lead-dialog') as HTMLElement;
+    const focusable = panel.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    expect(focusable.length).toBeGreaterThan(1);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
 
     last.focus();
     const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
-    Object.defineProperty(tabEvent, 'target', { value: last });
     component.onDocumentKeydown(tabEvent);
     expect(document.activeElement).toBe(first);
 
@@ -408,13 +349,125 @@ describe('HandilyCommerceFrontend', () => {
     component.onDocumentKeydown(shiftTab);
     expect(document.activeElement).toBe(last);
 
-    // Mid-list Tab should not wrap.
-    if (buttons.length > 1) {
-      first.focus();
-      const midTab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
-      component.onDocumentKeydown(midTab);
-      expect(document.activeElement).toBe(first);
+    http.verify();
+  });
+
+  it('should open mailto on lead form submit', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushBootstrap(http);
+
+    await openLeadModal(fixture);
+
+    const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
+    (dialog.querySelector('#lead-nome') as HTMLInputElement).value = 'Maria Silva';
+    (dialog.querySelector('#lead-contato') as HTMLInputElement).value = 'maria@prefeitura.gov.br';
+    (dialog.querySelector('#lead-solicitacao') as HTMLTextAreaElement).value =
+      'Cursos BNCC para a rede municipal.';
+
+    let assignedHref = '';
+    const originalLocation = window.location;
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: {
+        ...originalLocation,
+        set href(value: string) {
+          assignedHref = value;
+        },
+        get href() {
+          return assignedHref;
+        },
+      },
+    });
+
+    try {
+      (dialog.querySelector('form') as HTMLFormElement).requestSubmit();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(assignedHref).toContain('mailto:ajksys@protonmail.com');
+      expect(assignedHref).toContain(encodeURIComponent('Orçamento Handily — Maria Silva'));
+      expect(assignedHref).toContain(encodeURIComponent('Maria Silva'));
+      expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
+    } finally {
+      Object.defineProperty(window, 'location', {
+        configurable: true,
+        value: originalLocation,
+      });
     }
+
+    http.verify();
+  });
+
+
+  it('should open lead from secondary CTAs and honor dialog cancel event', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushBootstrap(http);
+
+    const labels = [
+      'Ver soluções',
+      'Saiba mais',
+      'Quero uma proposta',
+      'Fale conosco',
+      'Solicitar orçamento →',
+    ];
+    for (const label of labels) {
+      const el = Array.from(root.querySelectorAll('button, a')).find((node) =>
+        (node.textContent ?? '').trim().includes(label),
+      ) as HTMLElement | undefined;
+      if (!el || el.tagName === 'A') {
+        continue;
+      }
+      el.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(root.querySelector('dialog#lead-dialog')).toBeTruthy();
+      const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
+      dialog.dispatchEvent(new Event('cancel', { bubbles: true, cancelable: true }));
+      fixture.detectChanges();
+      expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
+    }
+
+    // Hero secondary CTA and footer CTA also open the dialog.
+    const allBudget = Array.from(root.querySelectorAll('button')).filter((b) =>
+      (b.textContent ?? '').includes('Solicitar orçamento'),
+    );
+    expect(allBudget.length).toBeGreaterThan(1);
+    allBudget[allBudget.length - 1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(root.querySelector('dialog#lead-dialog')).toBeTruthy();
+    (root.querySelector('dialog#lead-dialog') as HTMLDialogElement).dispatchEvent(
+      new Event('cancel', { bubbles: true, cancelable: true }),
+    );
+    fixture.detectChanges();
+    expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
+
+    http.verify();
+  });
+
+  it('should render FAQ and solutions sections', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushBootstrap(http);
+    fixture.detectChanges();
+
+    expect(root.querySelector('#solucoes')).toBeTruthy();
+    expect(root.querySelector('#bncc')).toBeTruthy();
+    expect(root.querySelector('#depoimentos')).toBeTruthy();
+    expect(root.querySelector('#faq')).toBeTruthy();
+    expect(root.textContent).toContain('Pensamento Computacional');
+    expect(root.textContent).toContain('O que é a Handily?');
 
     http.verify();
   });
