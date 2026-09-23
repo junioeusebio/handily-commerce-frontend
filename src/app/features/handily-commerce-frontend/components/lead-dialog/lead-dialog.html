@@ -1,0 +1,51 @@
+<app-modal
+  [(open)]="open"
+  dialogId="lead-dialog"
+  titleId="lead-title"
+  initialFocusSelector="#lead-nome"
+>
+  <form class="px-[1.35rem] pb-[1.4rem] pt-5" (submit)="onSubmit($event)">
+    <h2 id="lead-title" class="m-0 text-[1.15rem] font-semibold text-[#0b1f3a]">
+      Solicitar orçamento
+    </h2>
+    <p class="mt-[0.4rem] mb-4 text-xs text-[#5b6b7c]">
+      Envia para <strong>{{ contactEmail() }}</strong> pelo seu cliente de e-mail.
+    </p>
+    <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+      <label class="text-xs font-semibold" for="lead-nome">Nome</label>
+      <input
+        id="lead-nome"
+        name="nome"
+        required
+        autocomplete="name"
+        placeholder="Seu nome"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+      />
+    </div>
+    <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+      <label class="text-xs font-semibold" for="lead-contato">Contato</label>
+      <input
+        id="lead-contato"
+        name="contato"
+        required
+        autocomplete="email"
+        placeholder="E-mail ou telefone"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+      />
+    </div>
+    <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+      <label class="text-xs font-semibold" for="lead-solicitacao">Solicitação</label>
+      <textarea
+        id="lead-solicitacao"
+        name="solicitacao"
+        required
+        placeholder="Município, curso ou necessidade"
+        class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+      ></textarea>
+    </div>
+    <div class="mt-1 flex justify-end gap-[0.6rem]">
+      <app-button variant="ghost" type="button" (pressed)="close()">Cancelar</app-button>
+      <app-button variant="primary" type="submit">Enviar</app-button>
+    </div>
+  </form>
+</app-modal>

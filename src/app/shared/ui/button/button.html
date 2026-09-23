@@ -1,0 +1,11 @@
+<button
+  [attr.type]="type()"
+  [disabled]="disabled()"
+  [class]="classes()"
+  [attr.aria-haspopup]="ariaHaspopup()"
+  [attr.aria-expanded]="ariaExpanded()"
+  [attr.aria-controls]="ariaControls()"
+  (click)="onClick($event)"
+>
+  <ng-content />
+</button>

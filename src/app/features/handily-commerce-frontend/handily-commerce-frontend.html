@@ -1,84 +1,26 @@
-<main
-  class="handily-commerce-frontend flex min-h-dvh flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:px-6 sm:py-12 md:px-8"
->
-  <header class="flex flex-col items-center gap-3 text-center sm:gap-4">
-    <img
-      ngSrc="assets/img/logo.webp"
-      width="96"
-      height="96"
-      alt="Handily Commerce"
-      priority
-      class="h-20 w-20 rounded-full object-cover shadow-md sm:h-24 sm:w-24"
-    />
-    <h1
-      class="m-0 text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl"
-    >
-      Handily Commerce
-    </h1>
-  </header>
+<div class="handily-home min-h-dvh bg-white text-[#0b1f3a]">
+  <app-home-nav [leadOpen]="leadOpen()" (requestLead)="openLead($event)" />
 
-  <footer
-    class="app-versions flex w-full max-w-md flex-col items-stretch gap-3 rounded-md border border-border bg-surface px-3 py-3 text-sm text-subtle tabular-nums sm:max-w-none sm:w-auto sm:flex-row sm:items-center sm:justify-center sm:gap-3 sm:px-4 sm:py-2"
-    aria-label="Versões WEB e API"
-  >
-    <span class="text-center leading-relaxed sm:text-left">
-      WEB: {{ feVersion }} | API: {{ apiVersionLabel() }} · {{ apiStatusLabel() }}
-    </span>
-    <button
-      #openChangelogBtn
-      type="button"
-      class="rounded-md border border-border bg-primary-soft px-3 py-2 text-sm font-medium text-primary transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:py-1"
-      aria-haspopup="dialog"
-      [attr.aria-expanded]="changelogOpen()"
-      aria-controls="changelog-dialog"
-      (click)="openChangelog()"
-    >
-      What's new
-    </button>
-  </footer>
-</main>
+  <main>
+    <app-home-hero (requestLead)="openLead($event)" />
+    <app-home-solutions (requestLead)="openLead($event)" />
+    <app-home-banner (requestLead)="openLead($event)" />
+    <app-home-testimonials />
+    <app-home-faq />
+  </main>
 
-@if (changelogOpen()) {
-  <dialog
-    #changelogPanel
-    id="changelog-dialog"
-    aria-labelledby="changelog-title"
-    aria-modal="true"
-    class="fixed left-1/2 top-1/2 z-50 m-0 max-h-[min(80dvh,32rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg border border-border bg-surface p-5 shadow-lg backdrop:bg-foreground/40"
-    (click)="onDialogClick($event)"
-    (keydown)="onDialogKeydown($event)"
-    (cancel)="onDialogCancel($event)"
-  >
-    <div class="mb-4 flex items-start justify-between gap-3">
-      <h2 id="changelog-title" class="m-0 text-lg font-semibold text-foreground">
-        What's new
-      </h2>
-      <button
-        #closeChangelogBtn
-        type="button"
-        class="rounded-md border border-border bg-background px-2 py-1 text-sm text-muted transition hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        aria-label="Close what's new"
-        (click)="closeChangelog()"
-      >
-        Close
-      </button>
-    </div>
+  <app-home-footer
+    [feVersion]="feVersion"
+    [apiVersionLabel]="apiVersionLabel()"
+    [apiStatusLabel]="apiStatusLabel()"
+    [contactEmail]="contactEmail"
+    (requestLead)="openLead($event)"
+  />
+</div>
 
-    @if (changelogStatus() === 'loading') {
-      <p class="m-0 text-sm text-subtle tabular-nums" aria-live="polite">—</p>
-    } @else if (changelogStatus() === 'error') {
-      <p class="m-0 text-sm text-muted" role="alert">erro</p>
-    } @else if (changelogItems().length === 0) {
-      <p class="m-0 text-sm text-muted">No release notes yet.</p>
-    } @else {
-      <ul class="m-0 flex list-none flex-col gap-3 p-0">
-        @for (item of changelogItems(); track item.title) {
-          <li class="rounded-md border border-border bg-background px-3 py-2">
-            <h3 class="m-0 text-base font-medium text-foreground">{{ item.title }}</h3>
-            <p class="mt-1 mb-0 text-sm text-muted">{{ item.summary }}</p>
-          </li>
-        }
-      </ul>
-    }
-  </dialog>
-}
+<app-lead-dialog
+  [open]="leadOpen()"
+  (openChange)="leadOpen.set($event)"
+  [contactEmail]="contactEmail"
+  (submitted)="onLeadSubmitted($event)"
+/>

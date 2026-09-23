@@ -38,7 +38,7 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render Handily Commerce', async () => {
+  it('should render Handily institutional home', async () => {
     const fixture = TestBed.createComponent(App);
     const http = TestBed.inject(HttpTestingController);
 
@@ -66,7 +66,9 @@ describe('App', () => {
     await fixture.whenStable();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Handily Commerce');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Tecnologia e formação para municípios na BNCC Computação',
+    );
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('WEB: ' + APP_VERSION);
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('API: v1');
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('· ok');
