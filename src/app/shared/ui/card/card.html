@@ -1,0 +1,14 @@
+<article [class]="shellClasses()">
+  <div class="contents">
+    <ng-content select="[cardBadge]" />
+  </div>
+  @if (title()) {
+    <h3 class="mt-[0.7rem] mb-0 text-[1.05rem]">{{ title() }}</h3>
+  }
+  <div class="contents">
+    <ng-content />
+  </div>
+  <div class="mt-auto contents">
+    <ng-content select="[cardFooter]" />
+  </div>
+</article>

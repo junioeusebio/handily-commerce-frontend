@@ -1,0 +1,91 @@
+<section
+  class="relative overflow-hidden bg-[radial-gradient(1200px_500px_at_80%_20%,rgba(30,91,184,0.45),transparent_55%),linear-gradient(160deg,#07111f_0%,#0c1c33_55%,#123a6b_100%)] text-white"
+>
+  <div
+    class="pointer-events-none absolute inset-x-[-10%] bottom-[-30%] left-[40%] h-[70%] bg-[radial-gradient(circle_at_30%_40%,rgba(56,189,248,0.18),transparent_55%),radial-gradient(circle_at_70%_60%,rgba(249,115,22,0.15),transparent_50%)]"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="relative z-[1] mx-auto grid max-w-6xl gap-8 px-5 py-[3.25rem] sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-[4.5rem]"
+  >
+    <div>
+      <p class="mb-4 inline-flex items-center gap-1 text-xs uppercase tracking-[0.08em] text-white/70">
+        Handily
+      </p>
+      <h1
+        class="m-0 text-[clamp(1.85rem,4.2vw,3.15rem)] font-extrabold uppercase leading-[1.08] tracking-[0.02em]"
+      >
+        Tecnologia e formação para municípios na BNCC Computação
+      </h1>
+      <p class="mt-[1.15rem] max-w-xl text-[1.05rem] leading-relaxed text-white/82">
+        A Handily une desenvolvimento de sistemas e administração para capacitar redes municipais em
+        Pensamento Computacional, Mundo Digital e Cultura Digital — com cursos e soluções até
+        2026/2027.
+      </p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <app-button variant="primary" (pressed)="requestLead.emit($event)">
+          Solicitar orçamento
+        </app-button>
+        <a
+          class="inline-flex items-center justify-center rounded-full border border-white/45 bg-transparent px-[1.15rem] py-[0.6rem] text-sm font-bold text-white no-underline"
+          href="#solucoes"
+          >Ver soluções</a
+        >
+      </div>
+    </div>
+    <aside
+      class="relative min-h-64 overflow-hidden rounded-[1.25rem] border border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5"
+      aria-label="Em destaque"
+    >
+      <span
+        class="absolute right-4 top-4 rounded-full border border-[#f97316]/45 bg-[#f97316]/20 px-[0.55rem] py-1 text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#fdba74]"
+        >GovTech</span
+      >
+      <h2 class="m-0 text-[0.7rem] uppercase tracking-[0.1em] text-white/55">Em destaque</h2>
+      <ul class="mt-4 grid list-none gap-[0.65rem] p-0">
+        <li
+          class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+        >
+          <span
+            class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+            aria-hidden="true"
+          ></span>
+          <div>
+            <strong class="block text-sm">Cursos BNCC para prefeituras</strong>
+            <span class="mt-0.5 block text-xs text-white/65"
+              >Formação nos três eixos da BNCC Computação.</span
+            >
+          </div>
+        </li>
+        <li
+          class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+        >
+          <span
+            class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+            aria-hidden="true"
+          ></span>
+          <div>
+            <strong class="block text-sm">Sistemas para educação municipal</strong>
+            <span class="mt-0.5 block text-xs text-white/65"
+              >Software para processos e gestão escolar.</span
+            >
+          </div>
+        </li>
+        <li
+          class="flex items-start gap-3 rounded-[0.85rem] border border-white/8 bg-[#07111f]/35 px-[0.9rem] py-[0.8rem]"
+        >
+          <span
+            class="mt-[0.3rem] h-[0.65rem] w-[0.65rem] shrink-0 rounded-full bg-[#f97316] shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+            aria-hidden="true"
+          ></span>
+          <div>
+            <strong class="block text-sm">Consultoria de implantação</strong>
+            <span class="mt-0.5 block text-xs text-white/65"
+              >Administração e acompanhamento até 2026/2027.</span
+            >
+          </div>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</section>
