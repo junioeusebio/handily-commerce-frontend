@@ -1,12 +1,12 @@
-<section id="solucoes" class="bg-[#f3f6fa] py-12">
+<section id="solucoes" class="bg-white py-12">
   <div class="mx-auto max-w-6xl px-5 sm:px-6">
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h2 class="m-0 text-[clamp(1.4rem,2.5vw,1.85rem)] tracking-tight">
-          Principais soluções em ação
+          Formação BNCC em destaque
         </h2>
         <p class="mt-[0.55rem] max-w-xl text-[0.95rem] text-[#5b6b7c]">
-          Hub de ofertas para municípios — eixos BNCC e pilares Handily.
+          Eixos da BNCC Computação para redes municipais — catálogo detalhado em etapa futura.
         </p>
       </div>
       <button
@@ -73,60 +73,6 @@
         >
           Saiba mais
         </button>
-      </app-card>
-
-      <app-card title="Desenvolvimento de sistemas">
-        <span
-          cardBadge
-          class="inline-flex w-fit rounded-full bg-[#ecfdf5] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#0f766e]"
-          >Software</span
-        >
-        <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
-          Soluções e automação para educação e gestão municipal.
-        </p>
-        <button
-          cardFooter
-          type="button"
-          class="mt-4 cursor-pointer border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8]"
-          (click)="requestLead.emit($event)"
-        >
-          Saiba mais
-        </button>
-      </app-card>
-
-      <app-card title="Gestão e processos">
-        <span
-          cardBadge
-          class="inline-flex w-fit rounded-full bg-[#ecfdf5] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#0f766e]"
-          >Administração</span
-        >
-        <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
-          Capacitação para implantar a BNCC com clareza operacional.
-        </p>
-        <button
-          cardFooter
-          type="button"
-          class="mt-4 cursor-pointer border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8]"
-          (click)="requestLead.emit($event)"
-        >
-          Saiba mais
-        </button>
-      </app-card>
-
-      <app-card title="Pacote município BNCC" tone="dash">
-        <span
-          cardBadge
-          class="inline-flex w-fit rounded-full bg-[#fff7ed] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#ea580c]"
-          >Combo</span
-        >
-        <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
-          Cursos + consultoria + software. Catálogo detalhado em H4.
-        </p>
-        <div cardFooter class="mt-4">
-          <app-button variant="primary" className="w-fit" (pressed)="requestLead.emit($event)">
-            Quero uma proposta
-          </app-button>
-        </div>
       </app-card>
     </div>
   </div>

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 
-import { Card } from '@shared';
+import { Button, Card } from '@shared';
 
 @Component({
-  selector: 'app-home-solutions',
+  selector: 'app-home-services',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Card],
-  templateUrl: './home-solutions.html',
+  imports: [Button, Card],
+  templateUrl: './home-services.html',
 })
-export class HomeSolutions {
+export class HomeServices {
   readonly requestLead = output<MouseEvent>();
 }

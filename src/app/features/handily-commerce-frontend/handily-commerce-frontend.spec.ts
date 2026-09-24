@@ -423,8 +423,9 @@ describe('HandilyCommerceFrontend', () => {
 
     const labels = [
       'Saiba mais',
-      'Quero uma proposta',
       'Fale conosco',
+      'Falar sobre sistemas →',
+      'Falar sobre gestão →',
       'Solicitar orçamento →',
     ];
     for (const label of labels) {
@@ -482,6 +483,31 @@ describe('HandilyCommerceFrontend', () => {
     expect(root.querySelector('#faq')).toBeTruthy();
     expect(root.textContent).toContain('Pensamento Computacional');
     expect(root.textContent).toContain('O que é a Handily?');
+
+    http.verify();
+  });
+
+  it('should render H2 institutional sections Quem somos, Serviços and Por que BNCC', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    flushBootstrap(http);
+    fixture.detectChanges();
+
+    expect(root.querySelector('#quem-somos')).toBeTruthy();
+    expect(root.querySelector('#servicos')).toBeTruthy();
+    expect(root.querySelector('#bncc')).toBeTruthy();
+    expect(root.textContent).toContain('Quem somos');
+    expect(root.textContent).toContain('AJKSys Consulting');
+    expect(root.textContent).toContain('Serviços');
+    expect(root.textContent).toContain('Desenvolvimento de sistemas');
+    expect(root.textContent).toContain('Administração e gestão para municípios');
+    expect(root.textContent).toContain('Por que BNCC agora');
+    expect(root.textContent).toContain('2026/2027');
+    expect(root.textContent).toContain('Software · municípios');
+    expect(root.textContent?.toLowerCase()).not.toContain('store');
 
     http.verify();
   });

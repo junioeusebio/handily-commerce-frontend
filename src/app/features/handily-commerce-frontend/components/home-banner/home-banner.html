@@ -1,14 +1,50 @@
-<section id="bncc" class="bg-[linear-gradient(90deg,#0c1c33,#123a6b)] text-white">
-  <div
-    class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-9 sm:px-6 md:flex-row md:items-center md:justify-between md:py-10"
-  >
-    <div>
-      <h2 class="m-0 text-[1.4rem]">Por que agir até 2026/2027</h2>
-      <p class="mt-[0.45rem] max-w-xl text-[0.95rem] text-white/80">
-        Milhares de municípios precisam investir em formação e sistemas. Fale com a Handily e
-        modernize a gestão educacional da sua cidade.
-      </p>
+<section id="bncc" class="bg-[linear-gradient(160deg,#07111f_0%,#0c1c33_50%,#123a6b_100%)] text-white">
+  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-6 md:py-12">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl">
+        <p class="m-0 text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#fdba74]">
+          BNCC Computação
+        </p>
+        <h2 class="mt-2 m-0 text-[clamp(1.35rem,2.5vw,1.75rem)] tracking-tight">
+          Por que BNCC agora
+        </h2>
+        <p class="mt-[0.55rem] mb-0 text-[0.95rem] leading-relaxed text-white/80">
+          Prefeituras precisam avançar na BNCC Computação com formação e sistemas. O prazo de
+          referência para as redes municipais é
+          <strong class="font-bold text-white">2026/2027</strong> — quanto antes a secretaria
+          organizar eixos, capacitação e processos, menor o risco de atraso.
+        </p>
+      </div>
+      <app-button variant="primary" className="w-fit shrink-0" (pressed)="requestLead.emit($event)"
+        >Fale conosco</app-button
+      >
     </div>
-    <app-button variant="primary" (pressed)="requestLead.emit($event)">Fale conosco</app-button>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-3">
+      <article
+        class="rounded-[1rem] border border-white/12 bg-white/[0.06] px-[1.05rem] py-[1rem]"
+      >
+        <h3 class="m-0 text-[1rem] text-white">Pensamento Computacional</h3>
+        <p class="mt-[0.45rem] mb-0 text-sm leading-relaxed text-white/70">
+          Algoritmos, lógica e resolução de problemas para a rede municipal de ensino.
+        </p>
+      </article>
+      <article
+        class="rounded-[1rem] border border-white/12 bg-white/[0.06] px-[1.05rem] py-[1rem]"
+      >
+        <h3 class="m-0 text-[1rem] text-white">Mundo Digital</h3>
+        <p class="mt-[0.45rem] mb-0 text-sm leading-relaxed text-white/70">
+          Tecnologias, dados e infraestrutura para escola e secretaria.
+        </p>
+      </article>
+      <article
+        class="rounded-[1rem] border border-white/12 bg-white/[0.06] px-[1.05rem] py-[1rem]"
+      >
+        <h3 class="m-0 text-[1rem] text-white">Cultura Digital</h3>
+        <p class="mt-[0.45rem] mb-0 text-sm leading-relaxed text-white/70">
+          Cidadania, ética e uso crítico das tecnologias na comunidade escolar.
+        </p>
+      </article>
+    </div>
   </div>
 </section>
