@@ -1,0 +1,60 @@
+<section id="servicos" class="bg-[#f3f6fa] py-12">
+  <div class="mx-auto max-w-6xl px-5 sm:px-6">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="m-0 text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#1e5bb8]">
+          Oferta AJKSys
+        </p>
+        <h2 class="mt-2 m-0 text-[clamp(1.4rem,2.5vw,1.85rem)] tracking-tight">Serviços</h2>
+        <p class="mt-[0.55rem] max-w-xl text-[0.95rem] text-[#5b6b7c]">
+          Dois pilares para apoiar prefeituras na modernização da educação e da gestão municipal.
+        </p>
+      </div>
+      <app-button variant="ghost" className="w-fit" (pressed)="requestLead.emit($event)">
+        Solicitar orçamento
+      </app-button>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <app-card title="Desenvolvimento de sistemas">
+        <span
+          cardBadge
+          class="inline-flex w-fit rounded-full bg-[#ecfdf5] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#0f766e]"
+          >Software</span
+        >
+        <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+          Soluções digitais e automação para educação e gestão municipal — sistemas alinhados aos
+          processos da secretaria e da rede de escolas.
+        </p>
+        <button
+          cardFooter
+          type="button"
+          class="mt-4 cursor-pointer border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8]"
+          (click)="requestLead.emit($event)"
+        >
+          Falar sobre sistemas →
+        </button>
+      </app-card>
+
+      <app-card title="Administração e gestão para municípios">
+        <span
+          cardBadge
+          class="inline-flex w-fit rounded-full bg-[#e8f1fb] px-[0.55rem] py-[0.2rem] text-[0.65rem] font-bold uppercase tracking-[0.06em] text-[#1e5bb8]"
+          >Administração</span
+        >
+        <p class="mt-[0.45rem] mb-0 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
+          Apoio à implantação e à operação: processos, capacitação e acompanhamento para redes
+          municipais que precisam avançar com clareza e governança.
+        </p>
+        <button
+          cardFooter
+          type="button"
+          class="mt-4 cursor-pointer border-0 bg-transparent p-0 text-left text-sm font-bold text-[#1e5bb8]"
+          (click)="requestLead.emit($event)"
+        >
+          Falar sobre gestão →
+        </button>
+      </app-card>
+    </div>
+  </div>
+</section>

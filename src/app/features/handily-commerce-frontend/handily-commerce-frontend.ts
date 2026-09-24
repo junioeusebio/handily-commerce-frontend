@@ -13,11 +13,13 @@ import { catchError, of, retry } from 'rxjs';
 import { APP_VERSION } from '@core';
 import { ApiStatusService } from '@domains';
 
+import { HomeAbout } from './components/home-about/home-about';
 import { HomeBanner } from './components/home-banner/home-banner';
 import { HomeFaq } from './components/home-faq/home-faq';
 import { HomeFooter } from './components/home-footer/home-footer';
 import { HomeHero } from './components/home-hero/home-hero';
 import { HomeNav } from './components/home-nav/home-nav';
+import { HomeServices } from './components/home-services/home-services';
 import { HomeSolutions } from './components/home-solutions/home-solutions';
 import { HomeTestimonials } from './components/home-testimonials/home-testimonials';
 import { LeadDialog } from './components/lead-dialog/lead-dialog';
@@ -28,6 +30,8 @@ import { LeadDialog } from './components/lead-dialog/lead-dialog';
   imports: [
     HomeNav,
     HomeHero,
+    HomeAbout,
+    HomeServices,
     HomeSolutions,
     HomeBanner,
     HomeTestimonials,
