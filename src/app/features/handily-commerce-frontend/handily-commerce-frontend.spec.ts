@@ -1,16 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import {
-  APP_VERSION,
-  provideAppEnvironment,
-  resolveApiRoot,
-  type AppEnvironment,
-} from '@core';
+import { APP_VERSION, provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
 import type { Course } from '@domains';
 
 import { HandilyCommerceFrontend } from './handily-commerce-frontend';
@@ -36,11 +28,7 @@ describe('HandilyCommerceFrontend', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HandilyCommerceFrontend],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideAppEnvironment(testEnv),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideAppEnvironment(testEnv)],
     }).compileComponents();
   });
 
@@ -227,7 +215,7 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should open the lead dialog with Nome, Contato, and Solicitação fields', async () => {
+  it('should open the lead dialog with Nome, E-mail, Município and Mensagem fields', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -240,8 +228,9 @@ describe('HandilyCommerceFrontend', () => {
     const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
     expect(dialog?.textContent).toContain('Solicitar orçamento');
     expect(dialog?.querySelector('#lead-nome')).toBeTruthy();
-    expect(dialog?.querySelector('#lead-contato')).toBeTruthy();
-    expect(dialog?.querySelector('#lead-solicitacao')).toBeTruthy();
+    expect(dialog?.querySelector('#lead-email')).toBeTruthy();
+    expect(dialog?.querySelector('#lead-municipio')).toBeTruthy();
+    expect(dialog?.querySelector('#lead-mensagem')).toBeTruthy();
     expect(dialog?.getAttribute('aria-modal')).toBe('true');
     expect(dialog?.textContent).toContain('ajksys@protonmail.com');
 
@@ -392,10 +381,16 @@ describe('HandilyCommerceFrontend', () => {
     await openLeadModal(fixture);
 
     const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
-    (dialog.querySelector('#lead-nome') as HTMLInputElement).value = 'Maria Silva';
-    (dialog.querySelector('#lead-contato') as HTMLInputElement).value = 'maria@prefeitura.gov.br';
-    (dialog.querySelector('#lead-solicitacao') as HTMLTextAreaElement).value =
-      'Cursos BNCC para a rede municipal.';
+    const type = (sel: string, value: string) => {
+      const el = dialog.querySelector(sel) as HTMLInputElement;
+      el.value = value;
+      el.dispatchEvent(new Event('input'));
+    };
+    type('#lead-nome', 'Maria Silva');
+    type('#lead-email', 'maria@prefeitura.gov.br');
+    type('#lead-municipio', 'Campinas');
+    type('#lead-mensagem', 'Cursos BNCC para a rede municipal.');
+    fixture.detectChanges();
 
     let assignedHref = '';
     const originalLocation = window.location;
@@ -420,7 +415,7 @@ describe('HandilyCommerceFrontend', () => {
 
       expect(assignedHref).toContain('mailto:ajksys@protonmail.com');
       expect(assignedHref).toContain(encodeURIComponent('Orçamento Handily — Maria Silva'));
-      expect(assignedHref).toContain(encodeURIComponent('Maria Silva'));
+      expect(assignedHref).toContain(encodeURIComponent('Município: Campinas'));
       expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
     } finally {
       Object.defineProperty(window, 'location', {
@@ -556,17 +551,17 @@ describe('HandilyCommerceFrontend', () => {
 
     const dialog = root.querySelector('dialog#lead-dialog') as HTMLDialogElement;
     expect(dialog).toBeTruthy();
-    const solicitacao = dialog.querySelector('#lead-solicitacao') as HTMLTextAreaElement;
-    expect(solicitacao.value).toContain(courseTitle);
+    const mensagem = dialog.querySelector('#lead-mensagem') as HTMLTextAreaElement;
+    expect(mensagem.value).toContain(courseTitle);
 
-    solicitacao.value = 'Texto editado';
-    solicitacao.dispatchEvent(new Event('input'));
+    mensagem.value = 'Texto editado';
+    mensagem.dispatchEvent(new Event('input'));
     dialog.dispatchEvent(new Event('cancel', { bubbles: true, cancelable: true }));
     fixture.detectChanges();
     await fixture.whenStable();
 
     await openLeadModal(fixture);
-    expect((root.querySelector('#lead-solicitacao') as HTMLTextAreaElement).value).toBe(
+    expect((root.querySelector('#lead-mensagem') as HTMLTextAreaElement).value).toBe(
       'Texto editado',
     );
 

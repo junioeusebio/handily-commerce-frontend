@@ -24,7 +24,7 @@ import { HomeNav } from './components/home-nav/home-nav';
 import { HomeServices } from './components/home-services/home-services';
 import { HomeSolutions } from './components/home-solutions/home-solutions';
 import { HomeTestimonials } from './components/home-testimonials/home-testimonials';
-import { LeadDialog } from './components/lead-dialog/lead-dialog';
+import { LeadDialog, type LeadPayload } from './components/lead-dialog/lead-dialog';
 
 @Component({
   selector: 'app-handily-commerce-frontend',
@@ -76,14 +76,11 @@ export class HandilyCommerceFrontend implements OnInit {
     this.leadDialog().close();
   }
 
-  protected onLeadSubmitted(payload: {
-    nome: string;
-    contato: string;
-    solicitacao: string;
-  }): void {
-    const subject = encodeURIComponent(`Orçamento Handily — ${payload.nome}`);
+  protected onLeadSubmitted(payload: LeadPayload): void {
+    const subject = encodeURIComponent(`Orçamento Handily — ${payload.name}`);
     const body = encodeURIComponent(
-      `Nome: ${payload.nome}\nContato: ${payload.contato}\n\nSolicitação:\n${payload.solicitacao}`,
+      `Nome: ${payload.name}\nE-mail: ${payload.email}\nMunicípio: ${payload.municipality}` +
+        (payload.message ? `\n\nMensagem:\n${payload.message}` : ''),
     );
     window.location.href = `mailto:${this.contactEmail}?subject=${subject}&body=${body}`;
     this.closeLead();
