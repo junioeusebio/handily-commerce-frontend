@@ -4,7 +4,12 @@
   titleId="lead-title"
   initialFocusSelector="#lead-nome"
 >
-  <form class="px-[1.35rem] pb-[1.4rem] pt-5" (submit)="onSubmit($event)">
+  <form
+    class="px-[1.35rem] pb-[1.4rem] pt-5"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit($event)"
+    novalidate
+  >
     <h2 id="lead-title" class="m-0 text-[1.15rem] font-semibold text-[#0b1f3a]">
       Solicitar orçamento
     </h2>
@@ -15,39 +20,74 @@
       <label class="text-xs font-semibold" for="lead-nome">Nome</label>
       <input
         id="lead-nome"
-        name="nome"
+        formControlName="name"
         required
         autocomplete="name"
         placeholder="Seu nome"
-        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        [attr.maxlength]="max.name"
+        [attr.aria-invalid]="errorFor('name') ? 'true' : null"
+        [attr.aria-describedby]="errorFor('name') ? 'lead-nome-erro' : null"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
       />
+      @if (errorFor('name'); as erro) {
+        <p id="lead-nome-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
+      }
     </div>
     <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
-      <label class="text-xs font-semibold" for="lead-contato">Contato</label>
+      <label class="text-xs font-semibold" for="lead-email">E-mail</label>
       <input
-        id="lead-contato"
-        name="contato"
+        id="lead-email"
+        formControlName="email"
+        type="email"
         required
         autocomplete="email"
-        placeholder="E-mail ou telefone"
-        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        placeholder="voce@prefeitura.gov.br"
+        [attr.maxlength]="max.email"
+        [attr.aria-invalid]="errorFor('email') ? 'true' : null"
+        [attr.aria-describedby]="errorFor('email') ? 'lead-email-erro' : null"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
       />
+      @if (errorFor('email'); as erro) {
+        <p id="lead-email-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
+      }
     </div>
     <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
-      <label class="text-xs font-semibold" for="lead-solicitacao">Solicitação</label>
-      <textarea
-        id="lead-solicitacao"
-        name="solicitacao"
+      <label class="text-xs font-semibold" for="lead-municipio">Município</label>
+      <input
+        id="lead-municipio"
+        formControlName="municipality"
         required
-        placeholder="Município, curso ou necessidade"
-        [value]="solicitacao()"
-        (input)="onSolicitacaoInput($event)"
-        class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a]"
+        autocomplete="address-level2"
+        placeholder="Ex.: Campinas/SP"
+        [attr.maxlength]="max.municipality"
+        [attr.aria-invalid]="errorFor('municipality') ? 'true' : null"
+        [attr.aria-describedby]="errorFor('municipality') ? 'lead-municipio-erro' : null"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
+      />
+      @if (errorFor('municipality'); as erro) {
+        <p id="lead-municipio-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
+      }
+    </div>
+    <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+      <label class="text-xs font-semibold" for="lead-mensagem"
+        >Mensagem <span class="font-normal text-[#5b6b7c]">(opcional)</span></label
+      >
+      <textarea
+        id="lead-mensagem"
+        formControlName="message"
+        placeholder="Curso ou necessidade"
+        [attr.maxlength]="max.message"
+        [attr.aria-invalid]="errorFor('message') ? 'true' : null"
+        [attr.aria-describedby]="errorFor('message') ? 'lead-mensagem-erro' : null"
+        class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
       ></textarea>
+      @if (errorFor('message'); as erro) {
+        <p id="lead-mensagem-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
+      }
     </div>
     <div class="mt-1 flex justify-end gap-[0.6rem]">
       <app-button variant="ghost" type="button" (pressed)="close()">Cancelar</app-button>
-      <app-button variant="primary" type="submit">Enviar</app-button>
+      <app-button variant="primary" type="submit" [disabled]="!canSubmit()">Enviar</app-button>
     </div>
   </form>
 </app-modal>
