@@ -14,7 +14,9 @@
       Solicitar orçamento
     </h2>
     <p class="mt-[0.4rem] mb-4 text-xs text-[#5b6b7c]">
-      Envia para <strong>{{ contactEmail() }}</strong> pelo seu cliente de e-mail.
+      Retornamos pelo e-mail informado. Se preferir, escreva para
+      <strong>{{ contactEmail() }}</strong
+      >.
     </p>
     <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
       <label class="text-xs font-semibold" for="lead-nome">Nome</label>
@@ -85,9 +87,22 @@
         <p id="lead-mensagem-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
       }
     </div>
+    <div aria-live="polite" class="mb-3 text-xs empty:hidden">
+      @if (result() === 'success') {
+        <p class="m-0 font-semibold text-green-700">
+          Recebemos seu contato! Em breve retornamos por e-mail.
+        </p>
+      } @else if (result() === 'error') {
+        <p class="m-0 font-semibold text-red-700">
+          Não foi possível enviar agora. Confira os campos e tente de novo.
+        </p>
+      }
+    </div>
     <div class="mt-1 flex justify-end gap-[0.6rem]">
       <app-button variant="ghost" type="button" (pressed)="close()">Cancelar</app-button>
-      <app-button variant="primary" type="submit" [disabled]="!canSubmit()">Enviar</app-button>
+      <app-button variant="primary" type="submit" [disabled]="!canSubmit()">{{
+        sending() ? 'Enviando…' : 'Enviar'
+      }}</app-button>
     </div>
   </form>
 </app-modal>
