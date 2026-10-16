@@ -2,16 +2,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   input,
   model,
   output,
+  signal,
   viewChild,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { map } from 'rxjs';
+import { finalize, map } from 'rxjs';
 
+import { LeadService, type LeadCreated } from '@domains';
 import { Button, Modal } from '@shared';
 
 /** Payload alinhado ao contrato `POST /api/v1/leads` (BE). */
@@ -42,11 +46,21 @@ const LABELS: Record<LeadField, string> = {
 export class LeadDialog {
   private readonly modal = viewChild.required(Modal);
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly leads = inject(LeadService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly open = model(false);
   readonly contactEmail = input('ajksys@protonmail.com');
 
-  readonly submitted = output<LeadPayload>();
+  /** Emitido após o BE gravar o lead (201). */
+  readonly submitted = output<LeadCreated>();
+
+  /** Envio em andamento (desabilita o botão e mostra "Enviando…"). */
+  readonly sending = signal(false);
+  /** Resultado do último envio. */
+  readonly result = signal<'success' | 'error' | null>(null);
+  /** Erros por campo vindos do 400 (ValidationProblem) do BE. */
+  private readonly serverErrors = signal<Partial<Record<LeadField, string>>>({});
 
   protected readonly max = LEAD_MAX;
 
@@ -68,7 +82,17 @@ export class LeadDialog {
     { initialValue: true },
   );
 
-  readonly canSubmit = computed(() => this.status() === 'VALID' && !this.hasBlankRequired());
+  private readonly clearServerErrors = this.form.valueChanges
+    .pipe(takeUntilDestroyed())
+    .subscribe(() => {
+      if (Object.keys(this.serverErrors()).length) {
+        this.serverErrors.set({});
+      }
+    });
+
+  readonly canSubmit = computed(
+    () => this.status() === 'VALID' && !this.hasBlankRequired() && !this.sending(),
+  );
 
   /**
    * Abre o diálogo a partir de um gatilho.
@@ -78,6 +102,8 @@ export class LeadDialog {
     if (prefill !== undefined) {
       this.form.controls.message.setValue(prefill);
     }
+    this.result.set(null);
+    this.serverErrors.set({});
     this.modal().openFrom(event);
   }
 
@@ -87,6 +113,10 @@ export class LeadDialog {
 
   /** Mensagem de erro do campo, só depois de tocado/alterado. */
   protected errorFor(field: LeadField): string | null {
+    const server = this.serverErrors()[field];
+    if (server) {
+      return server;
+    }
     const control = this.form.controls[field];
     if (!control.invalid || !(control.touched || control.dirty)) {
       return null;
@@ -111,16 +141,52 @@ export class LeadDialog {
       return;
     }
     const v = this.form.getRawValue();
-    this.submitted.emit({
-      name: v.name.trim(),
-      email: v.email.trim(),
-      municipality: v.municipality.trim(),
-      message: v.message.trim(),
-    });
+    const message = v.message.trim();
+    this.sending.set(true);
+    this.result.set(null);
+    this.serverErrors.set({});
+    this.leads
+      .create({
+        name: v.name.trim(),
+        email: v.email.trim(),
+        municipality: v.municipality.trim(),
+        ...(message ? { message } : {}),
+      })
+      .pipe(
+        finalize(() => this.sending.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (created) => {
+          this.result.set('success');
+          this.form.reset();
+          this.submitted.emit(created);
+        },
+        error: (err: unknown) => {
+          this.serverErrors.set(fieldErrors(err));
+          this.result.set('error');
+        },
+      });
   }
 
   private blankRequired(): boolean {
     const v = this.form.getRawValue();
     return !v.name.trim() || !v.email.trim() || !v.municipality.trim();
   }
+}
+
+/** Mapeia `errors` do ValidationProblem (400) para o primeiro erro de cada campo. */
+function fieldErrors(err: unknown): Partial<Record<LeadField, string>> {
+  if (!(err instanceof HttpErrorResponse) || err.status !== 400) {
+    return {};
+  }
+  const errors = (err.error as { errors?: Record<string, string[]> } | null)?.errors ?? {};
+  const out: Partial<Record<LeadField, string>> = {};
+  for (const [key, msgs] of Object.entries(errors)) {
+    const field = (key.charAt(0).toLowerCase() + key.slice(1)) as LeadField;
+    if (field in LABELS && msgs?.[0]) {
+      out[field] = msgs[0];
+    }
+  }
+  return out;
 }

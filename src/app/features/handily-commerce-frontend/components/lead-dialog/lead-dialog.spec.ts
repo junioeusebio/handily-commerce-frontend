@@ -1,7 +1,19 @@
 import { Component, viewChild } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { LeadDialog, type LeadPayload } from './lead-dialog';
+import { provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
+import type { LeadCreated } from '@domains';
+
+import { LeadDialog } from './lead-dialog';
+
+const testEnv: AppEnvironment = {
+  production: false,
+  apiBaseUrl: 'http://localhost:5228/api',
+  apiVersion: 'v1',
+};
+const leadsUrl = `${resolveApiRoot(testEnv)}/leads`;
 
 @Component({
   imports: [LeadDialog],
@@ -9,10 +21,21 @@ import { LeadDialog, type LeadPayload } from './lead-dialog';
 })
 class Host {
   readonly dialog = viewChild.required(LeadDialog);
-  last: LeadPayload | null = null;
+  last: LeadCreated | null = null;
 }
 
 describe('LeadDialog', () => {
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideAppEnvironment(testEnv)],
+    });
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => http.verify());
+
   async function setup(prefill?: string) {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
@@ -29,10 +52,7 @@ describe('LeadDialog', () => {
       el.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
     };
-    const submit = () =>
-      Array.from(root.querySelectorAll('button')).find((b) =>
-        (b.textContent ?? '').includes('Enviar'),
-      ) as HTMLButtonElement;
+    const submit = () => root.querySelector('button[type="submit"]') as HTMLButtonElement;
     return { fixture, root, q, type, submit };
   }
 
@@ -52,20 +72,72 @@ describe('LeadDialog', () => {
     expect(submit().disabled).toBe(true);
   });
 
-  it('should enable Enviar when required fields are valid and emit trimmed payload', async () => {
-    const { fixture, submit, type, q } = await setup();
+  it('should POST trimmed payload, show Enviando… while sending and success after 201', async () => {
+    const { fixture, submit, type, q, root } = await setup();
     fillValid(type);
     type('#lead-mensagem', '  Cursos BNCC  ');
     expect(submit().disabled).toBe(false);
 
     q<HTMLFormElement>('form').requestSubmit();
     fixture.detectChanges();
-    expect(fixture.componentInstance.last).toEqual({
+    const req = http.expectOne(leadsUrl);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({
       name: 'Maria Silva',
       email: 'maria@prefeitura.gov.br',
       municipality: 'Campinas',
       message: 'Cursos BNCC',
     });
+    expect(submit().disabled).toBe(true);
+    expect(submit().textContent).toContain('Enviando…');
+
+    req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
+    fixture.detectChanges();
+    expect(fixture.componentInstance.last).toEqual({ id: 'abc' });
+    expect(root.textContent).toContain('Recebemos seu contato!');
+    expect(submit().textContent).toContain('Enviar');
+  });
+
+  it('should omit empty message from the payload', async () => {
+    const { fixture, type, q } = await setup();
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    const req = http.expectOne(leadsUrl);
+    expect(req.request.body).toEqual({
+      name: 'Maria Silva',
+      email: 'maria@prefeitura.gov.br',
+      municipality: 'Campinas',
+    });
+    req.flush({ id: 'x' }, { status: 201, statusText: 'Created' });
+  });
+
+  it('should map 400 field errors from the API and show error message', async () => {
+    const { fixture, type, q, root, submit } = await setup();
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    http
+      .expectOne(leadsUrl)
+      .flush(
+        { status: 400, errors: { Email: ['E-mail inválido.'] } },
+        { status: 400, statusText: 'Bad Request' },
+      );
+    fixture.detectChanges();
+    expect(root.textContent).toContain('Não foi possível enviar agora.');
+    expect(q('#lead-email-erro').textContent).toContain('E-mail inválido.');
+    expect(fixture.componentInstance.last).toBeNull();
+    expect(submit().disabled).toBe(false);
+  });
+
+  it('should show generic error on network failure', async () => {
+    const { fixture, type, q, root } = await setup();
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    http.expectOne(leadsUrl).error(new ProgressEvent('error'));
+    fixture.detectChanges();
+    expect(root.textContent).toContain('Não foi possível enviar agora.');
   });
 
   it('should show Portuguese errors with aria-invalid and aria-describedby after touch', async () => {

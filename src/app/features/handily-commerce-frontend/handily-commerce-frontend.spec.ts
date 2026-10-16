@@ -370,7 +370,7 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should open mailto on lead form submit', async () => {
+  it('should POST the lead to the API on submit and show success', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
@@ -392,38 +392,21 @@ describe('HandilyCommerceFrontend', () => {
     type('#lead-mensagem', 'Cursos BNCC para a rede municipal.');
     fixture.detectChanges();
 
-    let assignedHref = '';
-    const originalLocation = window.location;
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      value: {
-        ...originalLocation,
-        set href(value: string) {
-          assignedHref = value;
-        },
-        get href() {
-          return assignedHref;
-        },
-      },
+    (dialog.querySelector('form') as HTMLFormElement).requestSubmit();
+    fixture.detectChanges();
+
+    const req = http.expectOne((r) => r.url.endsWith('/leads'));
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({
+      name: 'Maria Silva',
+      email: 'maria@prefeitura.gov.br',
+      municipality: 'Campinas',
+      message: 'Cursos BNCC para a rede municipal.',
     });
+    req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
+    fixture.detectChanges();
 
-    try {
-      (dialog.querySelector('form') as HTMLFormElement).requestSubmit();
-      fixture.detectChanges();
-      await fixture.whenStable();
-      fixture.detectChanges();
-
-      expect(assignedHref).toContain('mailto:ajksys@protonmail.com');
-      expect(assignedHref).toContain(encodeURIComponent('Orçamento Handily — Maria Silva'));
-      expect(assignedHref).toContain(encodeURIComponent('Município: Campinas'));
-      expect(root.querySelector('dialog#lead-dialog')).toBeFalsy();
-    } finally {
-      Object.defineProperty(window, 'location', {
-        configurable: true,
-        value: originalLocation,
-      });
-    }
-
+    expect(dialog.textContent).toContain('Recebemos seu contato!');
     http.verify();
   });
 
