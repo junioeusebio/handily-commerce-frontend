@@ -3,7 +3,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockState, TestBed } from '@angular/core/testing';
 
 import {
   APP_VERSION,
@@ -61,6 +61,12 @@ describe('App', () => {
         });
       }
     }
+
+    const deferBlocks = await fixture.getDeferBlocks();
+    for (const block of deferBlocks) {
+      await block.render(DeferBlockState.Complete);
+    }
+    fixture.detectChanges();
 
     http.expectOne(`${resolveApiRoot(testEnv)}/courses`).flush([]);
 
