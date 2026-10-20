@@ -12,10 +12,34 @@
     <app-home-about />
     <app-home-services (requestLead)="openLead($event)" />
     <app-home-solutions (requestLead)="openLead($event)" />
-    <app-home-courses (requestCourseLead)="openCourseLead($event)" />
+    @defer (on viewport) {
+      <app-home-courses (requestCourseLead)="openCourseLead($event)" />
+    } @placeholder {
+      <section id="cursos" class="bg-[#f3f6fa] py-12" aria-hidden="true">
+        <div class="mx-auto max-w-6xl px-5 sm:px-6">
+          <div class="min-h-80 rounded-2xl bg-white/70"></div>
+        </div>
+      </section>
+    }
     <app-home-banner (requestLead)="openLead($event)" />
-    <app-home-testimonials />
-    <app-home-faq />
+    @defer (on viewport) {
+      <app-home-testimonials />
+    } @placeholder {
+      <section id="depoimentos" class="py-12" aria-hidden="true">
+        <div class="mx-auto max-w-6xl px-5 sm:px-6">
+          <div class="min-h-56 rounded-2xl bg-[#f3f6fa]"></div>
+        </div>
+      </section>
+    }
+    @defer (on viewport) {
+      <app-home-faq />
+    } @placeholder {
+      <section id="faq" class="bg-[#f3f6fa] py-12" aria-hidden="true">
+        <div class="mx-auto max-w-6xl px-5 sm:px-6">
+          <div class="min-h-72 rounded-2xl bg-white/70"></div>
+        </div>
+      </section>
+    }
     <app-home-contact [contactEmail]="contactEmail" (requestLead)="openLead($event)" />
   </main>
 

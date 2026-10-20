@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockState, TestBed } from '@angular/core/testing';
 
 import { APP_VERSION, provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
 import type { Course } from '@domains';
@@ -31,6 +31,17 @@ describe('HandilyCommerceFrontend', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), provideAppEnvironment(testEnv)],
     }).compileComponents();
   });
+
+  async function renderDeferredSections(
+    fixture: ReturnType<typeof TestBed.createComponent<HandilyCommerceFrontend>>,
+  ): Promise<void> {
+    const blocks = await fixture.getDeferBlocks();
+    expect(blocks.length).toBe(3);
+    for (const block of blocks) {
+      await block.render(DeferBlockState.Complete);
+    }
+    fixture.detectChanges();
+  }
 
   function flushApiVersion(
     http: HttpTestingController,
@@ -65,13 +76,15 @@ describe('HandilyCommerceFrontend', () => {
   }
 
   /** Matches ngOnInit: apiVersion + ping (order not guaranteed), plus the courses section. */
-  function flushBootstrap(
+  async function flushBootstrap(
     http: HttpTestingController,
     opts: {
       version?: { version: string } | null;
       ping?: { service: string; apiVersion: string; status: string } | null;
     } = {},
-  ): void {
+    fixture: ReturnType<typeof TestBed.createComponent<HandilyCommerceFrontend>>,
+  ): Promise<void> {
+    await renderDeferredSections(fixture);
     flushCourses(http);
     const versionBody = opts.version === undefined ? { version: 'v1' } : opts.version;
     const pingBody =
@@ -130,7 +143,7 @@ describe('HandilyCommerceFrontend', () => {
     const http = TestBed.inject(HttpTestingController);
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -171,6 +184,7 @@ describe('HandilyCommerceFrontend', () => {
       req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
     }
     flushPing(http);
+    await renderDeferredSections(fixture);
     flushCourses(http);
 
     fixture.detectChanges();
@@ -193,6 +207,7 @@ describe('HandilyCommerceFrontend', () => {
       const req = http.expectOne(`${resolveApiRoot(testEnv)}/ping`);
       req.flush('fail', { status: 503, statusText: 'Service Unavailable' });
     }
+    await renderDeferredSections(fixture);
     flushCourses(http);
 
     fixture.detectChanges();
@@ -202,7 +217,7 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should show loading dashes before the responses', () => {
+  it('should show loading dashes before the responses', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
 
@@ -211,7 +226,7 @@ describe('HandilyCommerceFrontend', () => {
     expect(text).toContain('API: —');
     expect(text).toContain('· —');
 
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
     http.verify();
   });
 
@@ -221,7 +236,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     await openLeadModal(fixture);
 
@@ -243,7 +258,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     await openLeadModal(fixture);
     expect(root.querySelector('dialog#lead-dialog')).toBeTruthy();
@@ -267,11 +282,11 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should keep lead closed when Escape is pressed while closed', () => {
+  it('should keep lead closed when Escape is pressed while closed', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     const component = fixture.componentInstance as unknown as {
       leadOpen: { (): boolean };
@@ -290,7 +305,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     const dialog = await openLeadModal(fixture);
     dialog.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -307,7 +322,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     let dialog = await openLeadModal(fixture);
     dialog.dispatchEvent(
@@ -336,7 +351,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     await openLeadModal(fixture);
 
@@ -376,7 +391,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     await openLeadModal(fixture);
 
@@ -416,7 +431,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
 
     const labels = [
       'Saiba mais',
@@ -465,13 +480,37 @@ describe('HandilyCommerceFrontend', () => {
     http.verify();
   });
 
-  it('should render a skip link to the main content as the first focusable element', () => {
+  it('should defer courses, testimonials and FAQ behind viewport placeholders', async () => {
     const fixture = TestBed.createComponent(HandilyCommerceFrontend);
     const http = TestBed.inject(HttpTestingController);
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+
+    expect(root.querySelector('app-home-courses')).toBeFalsy();
+    expect(root.querySelector('app-home-testimonials')).toBeFalsy();
+    expect(root.querySelector('app-home-faq')).toBeFalsy();
+    expect(root.querySelector('#cursos')).toBeTruthy();
+    expect(root.querySelector('#depoimentos')).toBeTruthy();
+    expect(root.querySelector('#faq')).toBeTruthy();
+
+    await flushBootstrap(http, {}, fixture);
+    fixture.detectChanges();
+
+    expect(root.querySelector('app-home-courses')).toBeTruthy();
+    expect(root.querySelector('app-home-testimonials')).toBeTruthy();
+    expect(root.querySelector('app-home-faq')).toBeTruthy();
+
+    http.verify();
+  });
+
+  it('should render a skip link to the main content as the first focusable element', async () => {
+    const fixture = TestBed.createComponent(HandilyCommerceFrontend);
+    const http = TestBed.inject(HttpTestingController);
+    const root = fixture.nativeElement as HTMLElement;
+
+    fixture.detectChanges();
+    await flushBootstrap(http, {}, fixture);
     fixture.detectChanges();
 
     const firstFocusable = root.querySelector('a[href], button') as HTMLAnchorElement;
@@ -496,7 +535,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
     fixture.detectChanges();
 
     expect(root.querySelector('#solucoes')).toBeTruthy();
@@ -515,7 +554,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
     fixture.detectChanges();
 
     const section = root.querySelector('#cursos') as HTMLElement;
@@ -557,7 +596,7 @@ describe('HandilyCommerceFrontend', () => {
     const root = fixture.nativeElement as HTMLElement;
 
     fixture.detectChanges();
-    flushBootstrap(http);
+    await flushBootstrap(http, {}, fixture);
     fixture.detectChanges();
 
     expect(root.querySelector('#quem-somos')).toBeTruthy();
