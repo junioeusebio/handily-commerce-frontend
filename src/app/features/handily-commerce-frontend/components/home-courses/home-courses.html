@@ -12,7 +12,7 @@
 
     @switch (state().status) {
       @case ('loading') {
-        <p class="courses-loading m-0 text-sm text-[#5b6b7c]" role="status">Carregando cursos…</p>
+        <app-loading class="courses-loading block" variant="skeleton-cards" [count]="4" message="Carregando cursos…" />
       }
       @case ('error') {
         <div

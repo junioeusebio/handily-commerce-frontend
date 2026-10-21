@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
 import { BNCC_AXIS_LABELS, CourseService, type Course } from '@domains';
-import { Button, Card } from '@shared';
+import { Button, Card, Loading } from '@shared';
 
 /** Pedido de orçamento disparado a partir de um curso específico. */
 export interface CourseLeadRequest {
@@ -18,7 +18,7 @@ export type CoursesState =
 @Component({
   selector: 'app-home-courses',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button, Card],
+  imports: [Button, Card, Loading],
   templateUrl: './home-courses.html',
 })
 export class HomeCourses {
