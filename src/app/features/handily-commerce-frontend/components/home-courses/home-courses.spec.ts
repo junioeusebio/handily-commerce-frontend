@@ -60,6 +60,7 @@ describe('HomeCourses', () => {
     const { root } = render();
     expect(root.querySelector('#cursos')?.getAttribute('aria-busy')).toBe('true');
     expect(root.querySelector('.courses-loading')?.textContent).toContain('Carregando cursos');
+    expect(root.querySelectorAll('.loading-skeleton-cards > li').length).toBe(4);
     expect(root.querySelectorAll('article').length).toBe(0);
   });
 
