@@ -88,11 +88,7 @@
       }
     </div>
     <div aria-live="polite" class="mb-3 text-xs empty:hidden">
-      @if (result() === 'success') {
-        <p class="m-0 font-semibold text-green-700">
-          Recebemos seu contato! Em breve retornamos por e-mail.
-        </p>
-      } @else if (result() === 'error') {
+      @if (result() === 'error') {
         <p class="m-0 font-semibold text-red-700">
           Não foi possível enviar agora. Confira os campos e tente de novo.
         </p>

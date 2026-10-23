@@ -6,7 +6,9 @@ import { TestBed } from '@angular/core/testing';
 import { provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
 import type { LeadCreated } from '@domains';
 
-import { LeadDialog } from './lead-dialog';
+import { ToastService } from '@shared';
+
+import { LEAD_SUCCESS_MESSAGE, LeadDialog } from './lead-dialog';
 
 const testEnv: AppEnvironment = {
   production: false,
@@ -72,8 +74,9 @@ describe('LeadDialog', () => {
     expect(submit().disabled).toBe(true);
   });
 
-  it('should POST trimmed payload, show Enviando… while sending and success after 201', async () => {
+  it('should POST trimmed payload, show Enviando… while sending and close + toast after 201', async () => {
     const { fixture, submit, type, q, root } = await setup();
+    const showSpy = vi.spyOn(TestBed.inject(ToastService), 'show');
     fillValid(type);
     type('#lead-mensagem', '  Cursos BNCC  ');
     expect(submit().disabled).toBe(false);
@@ -94,8 +97,9 @@ describe('LeadDialog', () => {
     req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
     fixture.detectChanges();
     expect(fixture.componentInstance.last).toEqual({ id: 'abc' });
-    expect(root.textContent).toContain('Recebemos seu contato!');
-    expect(submit().textContent).toContain('Enviar');
+    expect(root.textContent).not.toContain('Recebemos seu contato!');
+    expect(fixture.componentInstance.dialog().open()).toBe(false);
+    expect(showSpy).toHaveBeenCalledWith({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
   });
 
   it('should omit empty message from the payload', async () => {
