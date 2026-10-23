@@ -3,11 +3,13 @@
   dialogId="lead-dialog"
   titleId="lead-title"
   initialFocusSelector="#lead-nome"
+  [dismissDisabled]="sending()"
 >
   <form
     class="px-[1.35rem] pb-[1.4rem] pt-5"
     [formGroup]="form"
     (ngSubmit)="onSubmit($event)"
+    [attr.aria-busy]="sending() ? 'true' : null"
     novalidate
   >
     <h2 id="lead-title" class="m-0 text-[1.15rem] font-semibold text-[#0b1f3a]">
@@ -29,7 +31,7 @@
         [attr.maxlength]="max.name"
         [attr.aria-invalid]="errorFor('name') ? 'true' : null"
         [attr.aria-describedby]="errorFor('name') ? 'lead-nome-erro' : null"
-        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600 disabled:cursor-not-allowed disabled:opacity-60"
       />
       @if (errorFor('name'); as erro) {
         <p id="lead-nome-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
@@ -47,7 +49,7 @@
         [attr.maxlength]="max.email"
         [attr.aria-invalid]="errorFor('email') ? 'true' : null"
         [attr.aria-describedby]="errorFor('email') ? 'lead-email-erro' : null"
-        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600 disabled:cursor-not-allowed disabled:opacity-60"
       />
       @if (errorFor('email'); as erro) {
         <p id="lead-email-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
@@ -64,7 +66,7 @@
         [attr.maxlength]="max.municipality"
         [attr.aria-invalid]="errorFor('municipality') ? 'true' : null"
         [attr.aria-describedby]="errorFor('municipality') ? 'lead-municipio-erro' : null"
-        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600 disabled:cursor-not-allowed disabled:opacity-60"
       />
       @if (errorFor('municipality'); as erro) {
         <p id="lead-municipio-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
@@ -81,7 +83,7 @@
         [attr.maxlength]="max.message"
         [attr.aria-invalid]="errorFor('message') ? 'true' : null"
         [attr.aria-describedby]="errorFor('message') ? 'lead-mensagem-erro' : null"
-        class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600"
+        class="min-h-24 resize-y rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600 disabled:cursor-not-allowed disabled:opacity-60"
       ></textarea>
       @if (errorFor('message'); as erro) {
         <p id="lead-mensagem-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
@@ -95,7 +97,9 @@
       }
     </div>
     <div class="mt-1 flex justify-end gap-[0.6rem]">
-      <app-button variant="ghost" type="button" (pressed)="close()">Cancelar</app-button>
+      <app-button variant="ghost" type="button" [disabled]="sending()" (pressed)="close()"
+        >Cancelar</app-button
+      >
       <app-button variant="primary" type="submit" [disabled]="!canSubmit()">{{
         sending() ? 'Enviando…' : 'Enviar'
       }}</app-button>

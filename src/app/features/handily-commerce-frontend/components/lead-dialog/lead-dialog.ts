@@ -146,6 +146,7 @@ export class LeadDialog {
     const v = this.form.getRawValue();
     const message = v.message.trim();
     this.sending.set(true);
+    this.form.disable();
     this.result.set(null);
     this.serverErrors.set({});
     this.leads
@@ -161,12 +162,15 @@ export class LeadDialog {
       )
       .subscribe({
         next: (created) => {
+          this.form.enable();
           this.form.reset();
           this.close();
           this.toast.show({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
           this.submitted.emit(created);
         },
         error: (err: unknown) => {
+          // Reabilita antes de aplicar erros do BE (enable emite valueChanges e limparia os erros).
+          this.form.enable();
           this.serverErrors.set(fieldErrors(err));
           this.result.set('error');
         },

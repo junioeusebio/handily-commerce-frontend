@@ -29,6 +29,8 @@ export class Modal {
   readonly labelledBy = input<string | null>(null);
   readonly initialFocusSelector = input<string | null>(null);
   readonly panelClass = input('');
+  /** Quando true, bloqueia fechar por Esc, backdrop ou cancel (ex.: envio em andamento). */
+  readonly dismissDisabled = input(false);
 
   readonly closed = output<void>();
 
@@ -91,11 +93,13 @@ export class Modal {
 
   protected onDialogCancel(event: Event): void {
     event.preventDefault();
-    this.close();
+    if (!this.dismissDisabled()) {
+      this.close();
+    }
   }
 
   private dismissIfBackdrop(event: Event): void {
-    if (event.target === event.currentTarget) {
+    if (event.target === event.currentTarget && !this.dismissDisabled()) {
       this.close();
     }
   }
@@ -107,7 +111,9 @@ export class Modal {
     }
     if (event.key === 'Escape') {
       event.preventDefault();
-      this.close();
+      if (!this.dismissDisabled()) {
+        this.close();
+      }
       return;
     }
     if (event.key === 'Tab') {
