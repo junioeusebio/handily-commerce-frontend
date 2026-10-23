@@ -102,6 +102,37 @@ describe('LeadDialog', () => {
     expect(showSpy).toHaveBeenCalledWith({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
   });
 
+  it('should disable all fields and buttons while sending and re-enable on error', async () => {
+    const { fixture, type, q, root, submit } = await setup();
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    const req = http.expectOne(leadsUrl);
+
+    const fields = ['#lead-nome', '#lead-email', '#lead-municipio', '#lead-mensagem'];
+    const buttons = () => Array.from(root.querySelectorAll('button')) as HTMLButtonElement[];
+    for (const sel of fields) {
+      expect(q<HTMLInputElement>(sel).disabled).toBe(true);
+    }
+    expect(buttons().length).toBeGreaterThanOrEqual(2);
+    expect(buttons().every((b) => b.disabled)).toBe(true);
+    expect(q('form').getAttribute('aria-busy')).toBe('true');
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.dialog().open()).toBe(true);
+
+    req.error(new ProgressEvent('error'));
+    fixture.detectChanges();
+    for (const sel of fields) {
+      expect(q<HTMLInputElement>(sel).disabled).toBe(false);
+    }
+    expect(q<HTMLInputElement>('#lead-nome').value).toBe('Maria Silva');
+    expect(submit().disabled).toBe(false);
+    expect(buttons().every((b) => !b.disabled)).toBe(true);
+    expect(q('form').getAttribute('aria-busy')).toBeNull();
+  });
+
   it('should omit empty message from the payload', async () => {
     const { fixture, type, q } = await setup();
     fillValid(type);
