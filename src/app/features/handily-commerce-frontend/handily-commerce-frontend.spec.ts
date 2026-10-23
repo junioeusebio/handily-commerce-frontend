@@ -4,6 +4,7 @@ import { DeferBlockState, TestBed } from '@angular/core/testing';
 
 import { APP_VERSION, provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
 import type { Course } from '@domains';
+import { ToastService } from '@shared';
 
 import { HandilyCommerceFrontend } from './handily-commerce-frontend';
 
@@ -421,7 +422,11 @@ describe('HandilyCommerceFrontend', () => {
     req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
     fixture.detectChanges();
 
-    expect(dialog.textContent).toContain('Recebemos seu contato!');
+    expect(dialog.open).toBe(false);
+    expect(TestBed.inject(ToastService).toasts()[0]).toMatchObject({
+      message: 'Recebemos seu contato! Em breve retornamos por e-mail.',
+      type: 'success',
+    });
     http.verify();
   });
 

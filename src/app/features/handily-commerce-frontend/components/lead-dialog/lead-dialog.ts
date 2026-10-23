@@ -16,7 +16,9 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { finalize, map } from 'rxjs';
 
 import { LeadService, type LeadCreated } from '@domains';
-import { Button, Modal } from '@shared';
+import { Button, Modal, ToastService } from '@shared';
+
+export const LEAD_SUCCESS_MESSAGE = 'Recebemos seu contato! Em breve retornamos por e-mail.';
 
 /** Payload alinhado ao contrato `POST /api/v1/leads` (BE). */
 export interface LeadPayload {
@@ -48,6 +50,7 @@ export class LeadDialog {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly leads = inject(LeadService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly toast = inject(ToastService);
 
   readonly open = model(false);
   readonly contactEmail = input('ajksys@protonmail.com');
@@ -57,8 +60,8 @@ export class LeadDialog {
 
   /** Envio em andamento (desabilita o botão e mostra "Enviando…"). */
   readonly sending = signal(false);
-  /** Resultado do último envio. */
-  readonly result = signal<'success' | 'error' | null>(null);
+  /** Resultado do último envio com erro (sucesso fecha o modal e mostra toast). */
+  readonly result = signal<'error' | null>(null);
   /** Erros por campo vindos do 400 (ValidationProblem) do BE. */
   private readonly serverErrors = signal<Partial<Record<LeadField, string>>>({});
 
@@ -158,8 +161,9 @@ export class LeadDialog {
       )
       .subscribe({
         next: (created) => {
-          this.result.set('success');
           this.form.reset();
+          this.close();
+          this.toast.show({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
           this.submitted.emit(created);
         },
         error: (err: unknown) => {
