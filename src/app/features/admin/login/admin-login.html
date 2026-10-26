@@ -1,0 +1,51 @@
+<div class="admin-area flex min-h-dvh items-center justify-center bg-slate-950 px-4 text-slate-100">
+  <main class="w-full max-w-sm">
+    <p class="mb-3 text-center">
+      <span
+        class="rounded-md bg-emerald-500 px-2 py-0.5 text-xs font-extrabold tracking-[0.2em] text-slate-950"
+        >ADMIN</span
+      >
+    </p>
+    <form
+      class="rounded-2xl border border-emerald-500/40 bg-slate-900 p-6 shadow-xl"
+      [formGroup]="form"
+      (ngSubmit)="submit($event)"
+      [attr.aria-busy]="sending() ? 'true' : null"
+      novalidate
+    >
+      <h1 class="m-0 mb-1 text-xl font-bold">Entrar na área administrativa</h1>
+      <p class="mb-5 text-sm text-slate-300">Uso interno da equipe AJKSys.</p>
+      <label for="admin-email" class="mb-1 block text-sm font-semibold">E-mail</label>
+      <input
+        id="admin-email"
+        type="email"
+        autocomplete="username"
+        formControlName="email"
+        [class]="inputClass"
+      />
+      <label for="admin-password" class="mt-4 mb-1 block text-sm font-semibold">Senha</label>
+      <input
+        id="admin-password"
+        type="password"
+        autocomplete="current-password"
+        formControlName="password"
+        [class]="inputClass"
+      />
+      @if (error(); as msg) {
+        <p class="mt-4 rounded-lg bg-red-950 px-3 py-2 text-sm text-red-200" role="alert">
+          {{ msg }}
+        </p>
+      }
+      <app-button
+        type="submit"
+        variant="admin"
+        className="mt-5 w-full"
+        [disabled]="status() !== 'VALID' || sending()"
+        >{{ sending() ? 'Entrando…' : 'Entrar' }}</app-button
+      >
+    </form>
+    <p class="mt-4 text-center text-xs text-slate-400">
+      A sessão vale só nesta aba; ao recarregar, entre de novo.
+    </p>
+  </main>
+</div>

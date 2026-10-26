@@ -1,0 +1,50 @@
+<div class="admin-area min-h-dvh bg-slate-950 text-slate-100">
+  <a
+    class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-emerald-400 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-slate-950"
+    href="#admin-conteudo"
+    >Pular para o conteúdo</a
+  >
+  <div
+    class="bg-emerald-500 px-4 py-1 text-center text-xs font-extrabold uppercase tracking-[0.2em] text-slate-950"
+    role="note"
+  >
+    Área administrativa · uso interno
+  </div>
+  <header class="border-b border-emerald-500/30 bg-slate-900">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-5 py-3">
+      <span class="flex items-center gap-2 text-lg font-bold">
+        <span class="rounded-md bg-emerald-500 px-2 py-0.5 text-xs font-extrabold text-slate-950"
+          >ADMIN</span
+        >
+        AJKSys
+      </span>
+      <nav aria-label="Admin" class="flex flex-1 flex-wrap gap-1">
+        @for (link of links; track link.path) {
+          <a
+            [routerLink]="link.path"
+            routerLinkActive="bg-emerald-500/15 text-emerald-300"
+            [routerLinkActiveOptions]="{ exact: link.exact }"
+            ariaCurrentWhenActive="page"
+            class="rounded-full px-3 py-1.5 text-sm font-semibold text-slate-200 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+            >{{ link.label }}</a
+          >
+        }
+      </nav>
+      <a
+        routerLink="/"
+        class="text-sm text-slate-300 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-emerald-400"
+        >Ver site</a
+      >
+      <button
+        type="button"
+        class="rounded-full border border-emerald-400/60 px-3 py-1.5 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+        (click)="logout()"
+      >
+        Sair
+      </button>
+    </div>
+  </header>
+  <main id="admin-conteudo" tabindex="-1" class="mx-auto max-w-6xl px-5 py-8 outline-none">
+    <router-outlet />
+  </main>
+</div>

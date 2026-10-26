@@ -12,3 +12,18 @@ export { BNCC_AXIS_LABELS } from './course/course.model';
 export { CourseService } from './course/course.service';
 export type { LeadCreated, LeadRequest } from './lead/lead.model';
 export { LeadService } from './lead/lead.service';
+export type {
+  AdminCourse,
+  AdminLead,
+  AdminSummary,
+  CourseUpsert,
+  LeadPatch,
+  LeadQuery,
+  LeadStatus,
+  Paged,
+  Product,
+  ProductItem,
+  ProductUpsert,
+} from './admin/admin.model';
+export { ADMIN_LIMITS, LEAD_STATUSES } from './admin/admin.model';
+export { AdminService } from './admin/admin.service';

@@ -1,11 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-export type ButtonVariant = 'primary' | 'outline' | 'ghost';
+export type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'admin' | 'danger';
 
 @Component({
   selector: 'app-button',
@@ -30,6 +25,9 @@ export class Button {
       primary: 'border-0 bg-[#f97316] text-white hover:bg-[#ea580c]',
       outline: 'border border-white/45 bg-transparent text-white hover:bg-white/5',
       ghost: 'border border-[#d7e0ec] bg-white text-[#0c1c33] hover:bg-[#f3f6fa]',
+      /** Área admin: esmeralda sobre ardósia (tema próprio, distinto do cliente). */
+      admin: 'border-0 bg-emerald-500 text-slate-950 hover:bg-emerald-400',
+      danger: 'border-0 bg-red-700 text-white hover:bg-red-800',
     };
     return `${base} ${byVariant[this.variant()]} ${this.className()}`.trim();
   }

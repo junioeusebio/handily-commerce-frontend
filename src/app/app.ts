@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { HandilyCommerceFrontend } from '@features/handily-commerce-frontend/handily-commerce-frontend';
+import { RouterOutlet } from '@angular/router';
 import { ToastContainer } from '@shared';
 
 @Component({
   selector: 'app-root',
-  imports: [HandilyCommerceFrontend, ToastContainer],
+  imports: [RouterOutlet, ToastContainer],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

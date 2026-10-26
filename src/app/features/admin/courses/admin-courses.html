@@ -1,0 +1,193 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="m-0 text-2xl font-bold">Cursos</h1>
+  <app-button variant="admin" (pressed)="openCreate()">Novo curso</app-button>
+</div>
+
+@if (loading()) {
+  <app-loading variant="skeleton-list" message="Carregando cursos…" />
+} @else if (error(); as msg) {
+  <div role="alert" class="rounded-xl bg-red-950 p-4 text-red-200">
+    {{ msg }}
+    <button type="button" class="ml-2 font-semibold underline" (click)="load()">
+      Tentar de novo
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <p class="rounded-xl border border-dashed border-slate-600 p-6 text-center text-slate-300">
+    Nenhum curso cadastrado.
+  </p>
+} @else {
+  <ul class="m-0 grid list-none gap-3 p-0">
+    @for (course of items(); track course.id) {
+      <li
+        class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4"
+      >
+        <div>
+          <p class="m-0 font-semibold">{{ course.title }}</p>
+          <p class="m-0 text-sm text-slate-300">
+            {{ labelFor(course.axis) }} · {{ course.audience }}
+            @if (course.workloadHours) {
+              · {{ course.workloadHours }} h
+            }
+          </p>
+          <p class="m-0 text-xs text-slate-400">{{ course.id }}</p>
+        </div>
+        <span class="flex gap-2">
+          <button
+            type="button"
+            class="rounded-full px-3 py-1 text-sm font-semibold text-emerald-300 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-400"
+            [attr.aria-label]="'Editar ' + course.title"
+            (click)="openEdit(course)"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-3 py-1 text-sm font-semibold text-red-300 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-400"
+            [attr.aria-label]="'Apagar ' + course.title"
+            (click)="askDelete(course)"
+          >
+            Apagar
+          </button>
+        </span>
+      </li>
+    }
+  </ul>
+}
+
+<app-modal
+  [(open)]="formOpen"
+  dialogId="admin-course-form"
+  titleId="admin-course-title"
+  panelClass="max-w-lg text-slate-900"
+  initialFocusSelector="input:not([disabled])"
+  [dismissDisabled]="saving()"
+>
+  <form class="p-5" [formGroup]="form" (ngSubmit)="save($event)" novalidate>
+    <h2 id="admin-course-title" class="m-0 mb-4 text-lg font-bold">
+      {{ editingId() ? 'Editar curso' : 'Novo curso' }}
+    </h2>
+    <label for="course-id" class="mb-1 block text-sm font-semibold">Identificador (slug)</label>
+    <input
+      id="course-id"
+      formControlName="id"
+      [attr.maxlength]="limits.courseId"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('id') ? 'true' : null"
+    />
+    @if (errorFor('id'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <label for="course-title" class="mt-3 mb-1 block text-sm font-semibold">Título</label>
+    <input
+      id="course-title"
+      formControlName="title"
+      [attr.maxlength]="limits.courseTitle"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('title') ? 'true' : null"
+    />
+    @if (errorFor('title'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <label for="course-axis" class="mt-3 mb-1 block text-sm font-semibold">Eixo BNCC</label>
+    <select id="course-axis" formControlName="axis" [class]="inputClass">
+      @for (a of axes; track a[0]) {
+        <option [value]="a[0]">{{ a[1] }}</option>
+      }
+    </select>
+    @if (errorFor('axis'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <label for="course-summary" class="mt-3 mb-1 block text-sm font-semibold">Resumo</label>
+    <textarea
+      id="course-summary"
+      rows="3"
+      formControlName="summary"
+      [attr.maxlength]="limits.courseSummary"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('summary') ? 'true' : null"
+    ></textarea>
+    @if (errorFor('summary'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <label for="course-audience" class="mt-3 mb-1 block text-sm font-semibold">Público-alvo</label>
+    <input
+      id="course-audience"
+      formControlName="audience"
+      [attr.maxlength]="limits.courseAudience"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('audience') ? 'true' : null"
+    />
+    @if (errorFor('audience'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <div>
+        <label for="course-hours" class="mb-1 block text-sm font-semibold">Carga horária (h)</label>
+        <input
+          id="course-hours"
+          type="number"
+          min="1"
+          [attr.max]="limits.workloadHoursMax"
+          formControlName="workloadHours"
+          [class]="inputClass"
+        />
+        @if (errorFor('workloadHours'); as e) {
+          <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+        }
+      </div>
+      <div>
+        <label for="course-order" class="mb-1 block text-sm font-semibold">Ordem (opcional)</label>
+        <input
+          id="course-order"
+          type="number"
+          min="0"
+          formControlName="sortOrder"
+          [class]="inputClass"
+        />
+        @if (errorFor('sortOrder'); as e) {
+          <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+        }
+      </div>
+    </div>
+    @if (formError(); as msg) {
+      <p class="m-0 mt-3 text-sm text-red-700" role="alert">{{ msg }}</p>
+    }
+    <div class="mt-5 flex justify-end gap-2">
+      <app-button variant="ghost" (pressed)="formOpen.set(false)">Cancelar</app-button>
+      <button
+        type="submit"
+        class="rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>
+
+<app-modal
+  [(open)]="confirmOpen"
+  dialogId="admin-course-confirm"
+  titleId="admin-course-confirm-title"
+  panelClass="text-slate-900"
+  [dismissDisabled]="deleting()"
+>
+  <div class="p-5">
+    <h2 id="admin-course-confirm-title" class="m-0 text-lg font-bold">Apagar curso?</h2>
+    <p class="text-sm">
+      O curso <strong>{{ toDelete()?.title }}</strong> sai do catálogo do site.
+    </p>
+    <div class="flex justify-end gap-2">
+      <app-button variant="ghost" (pressed)="confirmOpen.set(false)">Cancelar</app-button>
+      <app-button variant="danger" [disabled]="deleting()" (pressed)="confirmDelete()">{{
+        deleting() ? 'Apagando…' : 'Apagar'
+      }}</app-button>
+    </div>
+  </div>
+</app-modal>
