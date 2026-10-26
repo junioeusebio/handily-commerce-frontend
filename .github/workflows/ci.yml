@@ -32,6 +32,11 @@ jobs:
       - name: Build for GitHub Pages
         run: npx ng build --configuration production --base-href=/handily-commerce-frontend/
 
+      # Deep links (ex.: /admin) no GitHub Pages: o Pages serve 404.html para rotas
+      # desconhecidas; sendo cópia do index.html, o router do Angular assume.
+      - name: SPA fallback (404.html)
+        run: cp dist/handily-commerce-frontend/browser/index.html dist/handily-commerce-frontend/browser/404.html
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:

@@ -1,18 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
-import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DeferBlockState, TestBed } from '@angular/core/testing';
 
-import {
-  APP_VERSION,
-  provideAppEnvironment,
-  resolveApiRoot,
-  type AppEnvironment,
-} from '@core';
+import { APP_VERSION, provideAppEnvironment, resolveApiRoot, type AppEnvironment } from '@core';
+
+import { Router, provideRouter } from '@angular/router';
 
 import { App } from './app';
+import { routes } from './app.routes';
 
 const testEnv: AppEnvironment = {
   production: false,
@@ -25,6 +20,7 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideRouter(routes),
         provideHttpClient(),
         provideHttpClientTesting(),
         provideAppEnvironment(testEnv),
@@ -42,6 +38,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const http = TestBed.inject(HttpTestingController);
 
+    await TestBed.inject(Router).navigateByUrl('/');
     fixture.detectChanges();
 
     const pending = http.match(
@@ -82,5 +79,19 @@ describe('App', () => {
     expect(compiled.querySelector('.app-versions')?.textContent).toContain('· ok');
 
     http.verify();
+  });
+
+  it('redirects /admin to the login when there is no session', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/admin/leads');
+    fixture.detectChanges();
+    expect(router.url).toBe('/admin/login?returnUrl=%2Fadmin%2Fleads');
+  });
+
+  it('sends unknown paths back to the home', async () => {
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/nao-existe');
+    expect(router.url).toBe('/');
   });
 });

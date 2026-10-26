@@ -1,0 +1,182 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="m-0 text-2xl font-bold">Produtos</h1>
+  <app-button variant="admin" (pressed)="openCreate()">Novo produto</app-button>
+</div>
+
+@if (loading()) {
+  <app-loading variant="skeleton-list" message="Carregando produtos…" />
+} @else if (error(); as msg) {
+  <div role="alert" class="rounded-xl bg-red-950 p-4 text-red-200">
+    {{ msg }}
+    <button type="button" class="ml-2 font-semibold underline" (click)="load()">
+      Tentar de novo
+    </button>
+  </div>
+} @else if (items().length === 0) {
+  <p class="rounded-xl border border-dashed border-slate-600 p-6 text-center text-slate-300">
+    Nenhum produto cadastrado.
+  </p>
+} @else {
+  <ul class="m-0 grid list-none gap-3 p-0">
+    @for (product of items(); track product.id) {
+      <li
+        class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4"
+      >
+        <div>
+          <p class="m-0 font-semibold">{{ product.name }}</p>
+          <p class="m-0 text-sm text-slate-300">
+            {{ product.sku || 'sem SKU' }} · {{ product.items.length }}
+            {{ product.items.length === 1 ? 'item' : 'itens' }}
+          </p>
+        </div>
+        <span class="flex gap-2">
+          <button
+            type="button"
+            class="rounded-full px-3 py-1 text-sm font-semibold text-emerald-300 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-400"
+            [attr.aria-label]="'Editar ' + product.name"
+            (click)="openEdit(product)"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-3 py-1 text-sm font-semibold text-red-300 hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-400"
+            [attr.aria-label]="'Apagar ' + product.name"
+            (click)="askDelete(product)"
+          >
+            Apagar
+          </button>
+        </span>
+      </li>
+    }
+  </ul>
+}
+
+<app-modal
+  [(open)]="formOpen"
+  dialogId="admin-product-form"
+  titleId="admin-product-title"
+  panelClass="max-w-xl text-slate-900"
+  initialFocusSelector="#product-name"
+  [dismissDisabled]="saving()"
+>
+  <form class="p-5" [formGroup]="form" (ngSubmit)="save($event)" novalidate>
+    <h2 id="admin-product-title" class="m-0 mb-4 text-lg font-bold">
+      {{ editingId() ? 'Editar produto' : 'Novo produto' }}
+    </h2>
+    <label for="product-name" class="mb-1 block text-sm font-semibold">Nome</label>
+    <input
+      id="product-name"
+      formControlName="name"
+      [attr.maxlength]="limits.productName"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('name') ? 'true' : null"
+    />
+    @if (errorFor('name'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <label for="product-sku" class="mt-3 mb-1 block text-sm font-semibold">SKU (opcional)</label>
+    <input
+      id="product-sku"
+      formControlName="sku"
+      [attr.maxlength]="limits.sku"
+      [class]="inputClass"
+      [attr.aria-invalid]="errorFor('sku') ? 'true' : null"
+    />
+    @if (errorFor('sku'); as e) {
+      <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+    }
+
+    <fieldset class="mt-4 rounded-lg border border-slate-300 p-3" formArrayName="items">
+      <legend class="px-1 text-sm font-semibold">Itens</legend>
+      @for (item of form.controls.items.controls; track item; let i = $index) {
+        <div class="mb-3 grid grid-cols-[1fr_8rem_auto] items-start gap-2" [formGroupName]="i">
+          <div>
+            <label [for]="'item-name-' + i" class="sr-only">Nome do item {{ i + 1 }}</label>
+            <input
+              [id]="'item-name-' + i"
+              formControlName="name"
+              placeholder="Nome do item"
+              [attr.maxlength]="limits.itemName"
+              [class]="inputClass"
+            />
+            @if (errorFor('items[' + i + '].name'); as e) {
+              <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+            }
+          </div>
+          <div>
+            <label [for]="'item-price-' + i" class="sr-only">Preço do item {{ i + 1 }}</label>
+            <input
+              [id]="'item-price-' + i"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="unitPrice"
+              placeholder="Preço"
+              [class]="inputClass"
+            />
+            @if (errorFor('items[' + i + '].unitPrice'); as e) {
+              <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
+            }
+          </div>
+          <button
+            type="button"
+            class="rounded-full px-2 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-emerald-600"
+            [attr.aria-label]="'Remover item ' + (i + 1)"
+            (click)="removeItem(i)"
+          >
+            Remover
+          </button>
+        </div>
+      } @empty {
+        <p class="m-0 mb-2 text-sm text-slate-600">Sem itens.</p>
+      }
+      @if (errorFor('items'); as e) {
+        <p class="m-0 mb-2 text-xs text-red-700">{{ e }}</p>
+      }
+      <button
+        type="button"
+        class="text-sm font-semibold text-emerald-800 underline focus-visible:outline-2 focus-visible:outline-emerald-600 disabled:opacity-50"
+        [disabled]="form.controls.items.length >= limits.maxItems"
+        (click)="addItem()"
+      >
+        + Adicionar item
+      </button>
+    </fieldset>
+    @if (formError(); as msg) {
+      <p class="m-0 mt-3 text-sm text-red-700" role="alert">{{ msg }}</p>
+    }
+    <div class="mt-5 flex justify-end gap-2">
+      <app-button variant="ghost" (pressed)="formOpen.set(false)">Cancelar</app-button>
+      <button
+        type="submit"
+        class="rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>
+
+<app-modal
+  [(open)]="confirmOpen"
+  dialogId="admin-product-confirm"
+  titleId="admin-product-confirm-title"
+  panelClass="text-slate-900"
+  [dismissDisabled]="deleting()"
+>
+  <div class="p-5">
+    <h2 id="admin-product-confirm-title" class="m-0 text-lg font-bold">Apagar produto?</h2>
+    <p class="text-sm">
+      O produto <strong>{{ toDelete()?.name }}</strong> e seus itens serão apagados.
+    </p>
+    <div class="flex justify-end gap-2">
+      <app-button variant="ghost" (pressed)="confirmOpen.set(false)">Cancelar</app-button>
+      <app-button variant="danger" [disabled]="deleting()" (pressed)="confirmDelete()">{{
+        deleting() ? 'Apagando…' : 'Apagar'
+      }}</app-button>
+    </div>
+  </div>
+</app-modal>

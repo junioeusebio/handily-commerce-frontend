@@ -1,0 +1,45 @@
+<h1 class="m-0 mb-6 text-2xl font-bold">Painel</h1>
+@if (loading()) {
+  <app-loading message="Carregando resumo…" />
+} @else if (error(); as msg) {
+  <div role="alert" class="rounded-xl bg-red-950 p-4 text-red-200">
+    {{ msg }}
+    <button type="button" class="ml-2 font-semibold underline" (click)="load()">
+      Tentar de novo
+    </button>
+  </div>
+} @else if (summary(); as s) {
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <a
+      routerLink="/admin/leads"
+      class="rounded-2xl border border-emerald-500/30 bg-slate-900 p-5 hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-emerald-400"
+    >
+      <p class="m-0 text-sm text-slate-300">Leads</p>
+      <p class="m-0 text-4xl font-bold text-emerald-300" data-testid="leads-total">
+        {{ s.leads.total }}
+      </p>
+      <p class="m-0 mt-2 text-sm text-slate-300">
+        {{ s.leads.novo }} novos · {{ s.leads.contatado }} contatados ·
+        {{ s.leads.descartado }} descartados
+      </p>
+    </a>
+    <a
+      routerLink="/admin/cursos"
+      class="rounded-2xl border border-emerald-500/30 bg-slate-900 p-5 hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-emerald-400"
+    >
+      <p class="m-0 text-sm text-slate-300">Cursos</p>
+      <p class="m-0 text-4xl font-bold text-emerald-300" data-testid="courses-total">
+        {{ s.courses }}
+      </p>
+    </a>
+    <a
+      routerLink="/admin/produtos"
+      class="rounded-2xl border border-emerald-500/30 bg-slate-900 p-5 hover:border-emerald-400 focus-visible:outline-2 focus-visible:outline-emerald-400"
+    >
+      <p class="m-0 text-sm text-slate-300">Produtos</p>
+      <p class="m-0 text-4xl font-bold text-emerald-300" data-testid="products-total">
+        {{ s.products }}
+      </p>
+    </a>
+  </div>
+}
