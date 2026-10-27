@@ -5,7 +5,10 @@ import { HomeContact } from './home-contact';
 
 @Component({
   imports: [HomeContact],
-  template: `<app-home-contact [contactEmail]="email" (requestLead)="count = count + 1" />`,
+  template: `<app-home-contact
+    [contactEmail]="email"
+    (requestLead)="count = count + 1"
+  />`,
 })
 class Host {
   email = 'ajksys@protonmail.com';

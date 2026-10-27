@@ -12,7 +12,9 @@ export const APP_ENVIRONMENT = new InjectionToken<AppEnvironment>('APP_ENVIRONME
  * Registers {@link APP_ENVIRONMENT} with the values from the file-replaced
  * `environment` module.
  */
-export function provideAppEnvironment(value: AppEnvironment = environment): EnvironmentProviders {
+export function provideAppEnvironment(
+  value: AppEnvironment = environment,
+): EnvironmentProviders {
   return makeEnvironmentProviders([{ provide: APP_ENVIRONMENT, useValue: value }]);
 }
 
