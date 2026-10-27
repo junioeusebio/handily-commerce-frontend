@@ -17,6 +17,7 @@ const lead: LeadRequest = {
   name: 'Maria Silva',
   email: 'maria@prefeitura.gov.br',
   municipality: 'Campinas',
+  phone: '11912345678',
   message: 'Cursos BNCC',
 };
 

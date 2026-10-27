@@ -4,11 +4,7 @@ import { Observable } from 'rxjs';
 
 import { APP_ENVIRONMENT, resolveApiRoot } from '@core';
 
-import type {
-  ApiVersionResponse,
-  HealthResponse,
-  PingResponse,
-} from './api-status.model';
+import type { ApiVersionResponse, HealthResponse, PingResponse } from './api-status.model';
 
 /**
  * Centralizes Handily Commerce API health/ping/version probes.

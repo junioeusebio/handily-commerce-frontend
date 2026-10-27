@@ -73,6 +73,26 @@
       }
     </div>
     <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
+      <label class="text-xs font-semibold" for="lead-telefone">Telefone</label>
+      <input
+        id="lead-telefone"
+        formControlName="phone"
+        appPhoneMask
+        type="tel"
+        inputmode="tel"
+        required
+        autocomplete="tel"
+        placeholder="(11) 91234-5678"
+        [attr.maxlength]="max.phone"
+        [attr.aria-invalid]="errorFor('phone') ? 'true' : null"
+        [attr.aria-describedby]="errorFor('phone') ? 'lead-telefone-erro' : null"
+        class="rounded-[0.65rem] border border-[#d7e0ec] bg-white px-3 py-[0.65rem] text-[#0b1f3a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus aria-invalid:border-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+      />
+      @if (errorFor('phone'); as erro) {
+        <p id="lead-telefone-erro" class="m-0 text-xs text-red-700">{{ erro }}</p>
+      }
+    </div>
+    <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
       <label class="text-xs font-semibold" for="lead-mensagem"
         >Mensagem <span class="font-normal text-[#5b6b7c]">(opcional)</span></label
       >
@@ -100,9 +120,16 @@
       <app-button variant="ghost" type="button" [disabled]="sending()" (pressed)="close()"
         >Cancelar</app-button
       >
-      <app-button variant="primary" type="submit" [disabled]="!canSubmit()">{{
-        sending() ? 'Enviando…' : 'Enviar'
-      }}</app-button>
+      <app-button variant="primary" type="submit" [disabled]="!canSubmit()">
+        @if (sending()) {
+          <span class="inline-flex items-center gap-2">
+            <app-loading variant="spinner" size="sm" [inline]="true" message="Enviando…" />
+            Enviando…
+          </span>
+        } @else {
+          Enviar
+        }
+      </app-button>
     </div>
   </form>
 </app-modal>

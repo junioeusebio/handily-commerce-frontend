@@ -49,8 +49,6 @@ describe('provideAppEnvironment', () => {
     });
 
     expect(TestBed.inject(APP_ENVIRONMENT)).toEqual(custom);
-    expect(resolveApiRoot(TestBed.inject(APP_ENVIRONMENT))).toBe(
-      'http://example.test/api/v1',
-    );
+    expect(resolveApiRoot(TestBed.inject(APP_ENVIRONMENT))).toBe('http://example.test/api/v1');
   });
 });

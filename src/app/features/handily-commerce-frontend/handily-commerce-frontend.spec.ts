@@ -405,6 +405,7 @@ describe('HandilyCommerceFrontend', () => {
     type('#lead-nome', 'Maria Silva');
     type('#lead-email', 'maria@prefeitura.gov.br');
     type('#lead-municipio', 'Campinas');
+    type('#lead-telefone', '(11) 91234-5678');
     type('#lead-mensagem', 'Cursos BNCC para a rede municipal.');
     fixture.detectChanges();
 
@@ -417,6 +418,7 @@ describe('HandilyCommerceFrontend', () => {
       name: 'Maria Silva',
       email: 'maria@prefeitura.gov.br',
       municipality: 'Campinas',
+      phone: '11912345678',
       message: 'Cursos BNCC para a rede municipal.',
     });
     req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
