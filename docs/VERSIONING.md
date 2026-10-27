@@ -23,3 +23,8 @@ Quem abre o PR deve:
 3. Incluir `Signed-off-by: Júnio Eusébio` e pedir review de `junioeusebio`.
 
 Não há bump automático: o workflow só valida se o label está presente.
+
+## Dependabot
+
+PRs do Dependabot (`.github/dependabot.yml`) já nascem com o label `Release Patch`, então passam no `require-release-label`. Eles **não** sobem a versão do `package.json`: o bump fica para o próximo PR de release.
+Sem `SONAR_TOKEN` nos secrets do Dependabot, o job `sonar` pula o scan e fica verde. Para analisar esses PRs, cadastre o mesmo `SONAR_TOKEN` em Settings → Secrets and variables → Dependabot.

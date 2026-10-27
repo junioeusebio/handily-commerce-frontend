@@ -64,7 +64,23 @@ jobs:
           name: coverage
           path: coverage/
 
+      # PRs do Dependabot não recebem os secrets do Actions. Sem SONAR_TOKEN o
+      # scan é pulado (o job fica verde). Para analisar também esses PRs, cadastre
+      # SONAR_TOKEN em Settings → Secrets and variables → Dependabot.
+      - name: Check SONAR_TOKEN
+        id: sonar-token
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -n "$SONAR_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::SONAR_TOKEN indisponível (ex.: PR do Dependabot). SonarQube Scan pulado."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: SonarQube Scan
+        if: steps.sonar-token.outputs.present == 'true'
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
