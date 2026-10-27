@@ -43,6 +43,23 @@ describe('AdminLeads', () => {
     };
   }
 
+  it('shows the phone formatted, or a dash when missing', () => {
+    const { fixture, c, el } = setup();
+    list('page=1&pageSize=20', [
+      { ...lead('a'), phone: '11912345678' },
+      { ...lead('b'), phone: null },
+    ]);
+    fixture.detectChanges();
+    const cells = el.querySelectorAll('[data-testid="lead-phone"]');
+    expect(cells[0].textContent?.trim()).toBe('(11) 91234-5678');
+    expect(cells[1].textContent?.trim()).toBe('—');
+    c.openDetail({ ...lead('c'), phone: '8132221111' });
+    fixture.detectChanges();
+    expect(
+      document.querySelector('[data-testid="lead-detail-phone"]')?.textContent?.trim(),
+    ).toBe('(81) 3222-1111');
+  });
+
   it('lists, paginates and filters', () => {
     const { fixture, c, el } = setup();
     list('page=1&pageSize=20', [lead('a')], 45);

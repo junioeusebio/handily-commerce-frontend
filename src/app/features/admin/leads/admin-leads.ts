@@ -19,7 +19,7 @@ import {
   type AdminLead,
   type LeadStatus,
 } from '@domains';
-import { Button, Loading, Modal, ToastService } from '@shared';
+import { Button, formatBrPhone, Loading, Modal, ToastService } from '@shared';
 
 import { ADMIN_INPUT, errorMessage, validationErrors } from '../shared/admin-errors';
 
@@ -65,6 +65,11 @@ export class AdminLeads implements OnInit {
     status: ['Novo' as LeadStatus, Validators.required],
     internalNote: ['', Validators.maxLength(ADMIN_LIMITS.note)],
   });
+
+  /** Telefone formatado `(11) 91234-5678`, ou `—` quando não informado. */
+  protected phone(lead: AdminLead): string {
+    return formatBrPhone(lead.phone) || '—';
+  }
 
   ngOnInit(): void {
     this.load();
