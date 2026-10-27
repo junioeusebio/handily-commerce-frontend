@@ -17,6 +17,8 @@ export class Loading {
   readonly count = input(3);
   readonly size = input<LoadingSize>('md');
   readonly className = input('');
+  /** Spinner compacto, sem padding nem texto visível (ex.: dentro de botões). */
+  readonly inline = input(false);
 
   protected readonly items = computed(() =>
     Array.from({ length: Math.max(1, Math.floor(this.count())) }, (_, i) => i),

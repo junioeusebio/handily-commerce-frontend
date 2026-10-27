@@ -38,4 +38,14 @@ describe('Loading', () => {
     const root = render({ variant: 'skeleton-list', count: 0 });
     expect(root.querySelectorAll('.loading-skeleton-list > li').length).toBe(1);
   });
+
+  it('renders a compact inline spinner without visible text', () => {
+    const root = render({ inline: true, size: 'sm', message: 'Enviando…', className: 'ml-1' });
+    const status = root.querySelector('[role="status"]') as HTMLElement;
+    expect(status.className).toContain('inline-flex');
+    expect(status.className).toContain('ml-1');
+    expect(root.querySelector('.py-6')).toBeNull();
+    expect(root.querySelector('.motion-safe\\:animate-spin')?.className).toContain('size-4');
+    expect(root.querySelector('.sr-only')?.textContent).toContain('Enviando…');
+  });
 });

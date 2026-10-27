@@ -3,6 +3,8 @@ export interface LeadRequest {
   name: string;
   email: string;
   municipality: string;
+  /** Telefone BR só com dígitos (10 ou 11). */
+  phone: string;
   message?: string;
 }
 

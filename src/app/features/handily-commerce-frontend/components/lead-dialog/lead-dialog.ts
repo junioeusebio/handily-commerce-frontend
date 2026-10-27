@@ -16,7 +16,15 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { finalize, map } from 'rxjs';
 
 import { LeadService, type LeadCreated } from '@domains';
-import { Button, Modal, ToastService } from '@shared';
+import {
+  Button,
+  brPhoneValidator,
+  Loading,
+  Modal,
+  PhoneMask,
+  phoneDigits,
+  ToastService,
+} from '@shared';
 
 export const LEAD_SUCCESS_MESSAGE = 'Recebemos seu contato! Em breve retornamos por e-mail.';
 
@@ -25,24 +33,38 @@ export interface LeadPayload {
   name: string;
   email: string;
   municipality: string;
+  phone: string;
   message: string;
 }
 
 export type LeadField = keyof LeadPayload;
 
-export const LEAD_MAX = { name: 120, email: 254, municipality: 120, message: 2000 } as const;
+export const LEAD_MAX = {
+  name: 120,
+  email: 254,
+  municipality: 120,
+  phone: 20,
+  message: 2000,
+} as const;
 
 const LABELS: Record<LeadField, string> = {
   name: 'Nome',
   email: 'E-mail',
   municipality: 'Município',
+  phone: 'Telefone',
   message: 'Mensagem',
+};
+
+const REQUIRED_TEXT: Partial<Record<LeadField, string>> = {
+  email: 'o e-mail',
+  municipality: 'o município',
+  phone: 'o telefone',
 };
 
 @Component({
   selector: 'app-lead-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Button, Modal, ReactiveFormsModule],
+  imports: [Button, Loading, Modal, PhoneMask, ReactiveFormsModule],
   templateUrl: './lead-dialog.html',
 })
 export class LeadDialog {
@@ -71,6 +93,7 @@ export class LeadDialog {
     name: ['', [Validators.required, Validators.maxLength(LEAD_MAX.name)]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(LEAD_MAX.email)]],
     municipality: ['', [Validators.required, Validators.maxLength(LEAD_MAX.municipality)]],
+    phone: ['', [Validators.required, brPhoneValidator]],
     message: ['', [Validators.maxLength(LEAD_MAX.message)]],
   });
 
@@ -126,7 +149,10 @@ export class LeadDialog {
     }
     const errors = control.errors ?? {};
     if (errors['required']) {
-      return `Informe ${field === 'email' ? 'o e-mail' : field === 'municipality' ? 'o município' : 'o nome'}.`;
+      return `Informe ${REQUIRED_TEXT[field] ?? 'o nome'}.`;
+    }
+    if (errors['brPhone']) {
+      return 'Informe um telefone válido com DDD (10 ou 11 dígitos).';
     }
     if (errors['email']) {
       return 'Informe um e-mail válido.';
@@ -154,6 +180,7 @@ export class LeadDialog {
         name: v.name.trim(),
         email: v.email.trim(),
         municipality: v.municipality.trim(),
+        phone: phoneDigits(v.phone),
         ...(message ? { message } : {}),
       })
       .pipe(
@@ -179,7 +206,7 @@ export class LeadDialog {
 
   private blankRequired(): boolean {
     const v = this.form.getRawValue();
-    return !v.name.trim() || !v.email.trim() || !v.municipality.trim();
+    return !v.name.trim() || !v.email.trim() || !v.municipality.trim() || !v.phone.trim();
   }
 }
 

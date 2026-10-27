@@ -1,4 +1,8 @@
-<div role="status" aria-live="polite" [class]="className()">
+<div
+  role="status"
+  aria-live="polite"
+  [class]="inline() ? 'inline-flex ' + className() : className()"
+>
   <span class="sr-only">{{ message() }}</span>
   @switch (variant()) {
     @case ('skeleton-cards') {
@@ -36,12 +40,18 @@
       </ul>
     }
     @default {
-      <div
-        class="loading-spinner flex items-center justify-center gap-3 py-6 text-sm text-[#5b6b7c]"
-      >
-        <span [class]="spinnerClasses()" aria-hidden="true"></span>
-        <span aria-hidden="true">{{ message() }}</span>
-      </div>
+      @if (inline()) {
+        <span class="loading-spinner inline-flex items-center" aria-hidden="true">
+          <span [class]="spinnerClasses()"></span>
+        </span>
+      } @else {
+        <div
+          class="loading-spinner flex items-center justify-center gap-3 py-6 text-sm text-[#5b6b7c]"
+        >
+          <span [class]="spinnerClasses()" aria-hidden="true"></span>
+          <span aria-hidden="true">{{ message() }}</span>
+        </div>
+      }
     }
   }
 </div>

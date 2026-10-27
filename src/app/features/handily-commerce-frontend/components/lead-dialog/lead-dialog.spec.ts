@@ -62,6 +62,7 @@ describe('LeadDialog', () => {
     type('#lead-nome', 'Maria Silva');
     type('#lead-email', 'maria@prefeitura.gov.br');
     type('#lead-municipio', 'Campinas');
+    type('#lead-telefone', '11912345678');
   }
 
   it('should disable Enviar while the form is invalid', async () => {
@@ -89,10 +90,12 @@ describe('LeadDialog', () => {
       name: 'Maria Silva',
       email: 'maria@prefeitura.gov.br',
       municipality: 'Campinas',
+      phone: '11912345678',
       message: 'Cursos BNCC',
     });
     expect(submit().disabled).toBe(true);
     expect(submit().textContent).toContain('Enviando…');
+    expect(submit().querySelector('app-loading .motion-safe\\:animate-spin')).not.toBeNull();
 
     req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
     fixture.detectChanges();
@@ -109,7 +112,13 @@ describe('LeadDialog', () => {
     fixture.detectChanges();
     const req = http.expectOne(leadsUrl);
 
-    const fields = ['#lead-nome', '#lead-email', '#lead-municipio', '#lead-mensagem'];
+    const fields = [
+      '#lead-nome',
+      '#lead-email',
+      '#lead-municipio',
+      '#lead-telefone',
+      '#lead-mensagem',
+    ];
     const buttons = () => Array.from(root.querySelectorAll('button')) as HTMLButtonElement[];
     for (const sel of fields) {
       expect(q<HTMLInputElement>(sel).disabled).toBe(true);
@@ -143,6 +152,7 @@ describe('LeadDialog', () => {
       name: 'Maria Silva',
       email: 'maria@prefeitura.gov.br',
       municipality: 'Campinas',
+      phone: '11912345678',
     });
     req.flush({ id: 'x' }, { status: 201, statusText: 'Created' });
   });
@@ -200,5 +210,51 @@ describe('LeadDialog', () => {
     fillValid(type);
     type('#lead-mensagem', '');
     expect(submit().disabled).toBe(false);
+  });
+
+  it('should mask phone, require it and validate 10–11 digits', async () => {
+    const { q, type, submit } = await setup();
+    type('#lead-nome', 'Maria Silva');
+    type('#lead-email', 'maria@prefeitura.gov.br');
+    type('#lead-municipio', 'Campinas');
+    expect(submit().disabled).toBe(true);
+
+    const phone = q<HTMLInputElement>('#lead-telefone');
+    expect(phone.type).toBe('tel');
+    expect(phone.getAttribute('inputmode')).toBe('tel');
+    expect(phone.getAttribute('autocomplete')).toBe('tel');
+
+    type('#lead-telefone', '');
+    expect(q('#lead-telefone-erro').textContent).toContain('Informe o telefone.');
+
+    type('#lead-telefone', '119123');
+    expect(phone.value).toBe('(11) 9123');
+    expect(phone.getAttribute('aria-invalid')).toBe('true');
+    expect(q('#lead-telefone-erro').textContent).toContain('telefone válido');
+    expect(submit().disabled).toBe(true);
+
+    type('#lead-telefone', '1112345678');
+    expect(phone.value).toBe('(11) 1234-5678');
+    expect(submit().disabled).toBe(false);
+
+    type('#lead-telefone', '11912345678');
+    expect(phone.value).toBe('(11) 91234-5678');
+    expect(submit().disabled).toBe(false);
+  });
+
+  it('should send phone as digits only and map backend phone error', async () => {
+    const { fixture, type, q } = await setup();
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    const req = http.expectOne(leadsUrl);
+    expect(req.request.body.phone).toBe('11912345678');
+    req.flush(
+      { status: 400, errors: { Phone: ['Telefone inválido.'] } },
+      { status: 400, statusText: 'Bad Request' },
+    );
+    fixture.detectChanges();
+    expect(q('#lead-telefone-erro').textContent).toContain('Telefone inválido.');
+    expect(q('#lead-telefone').getAttribute('aria-invalid')).toBe('true');
   });
 });
