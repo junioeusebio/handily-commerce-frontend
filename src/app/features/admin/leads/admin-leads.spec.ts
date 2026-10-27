@@ -55,9 +55,9 @@ describe('AdminLeads', () => {
     expect(cells[1].textContent?.trim()).toBe('—');
     c.openDetail({ ...lead('c'), phone: '8132221111' });
     fixture.detectChanges();
-    expect(
-      document.querySelector('[data-testid="lead-detail-phone"]')?.textContent?.trim(),
-    ).toBe('(81) 3222-1111');
+    expect(document.querySelector('[data-testid="lead-detail-phone"]')?.textContent?.trim()).toBe(
+      '(81) 3222-1111',
+    );
   });
 
   it('lists, paginates and filters', () => {
