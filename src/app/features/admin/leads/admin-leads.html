@@ -39,6 +39,7 @@
           <th scope="col" class="px-3 py-2">Data</th>
           <th scope="col" class="px-3 py-2">Nome</th>
           <th scope="col" class="px-3 py-2">E-mail</th>
+          <th scope="col" class="px-3 py-2">Telefone</th>
           <th scope="col" class="px-3 py-2">Município</th>
           <th scope="col" class="px-3 py-2">Status</th>
           <th scope="col" class="px-3 py-2"><span class="sr-only">Ações</span></th>
@@ -52,6 +53,7 @@
             </td>
             <td class="px-3 py-2">{{ lead.name }}</td>
             <td class="px-3 py-2">{{ lead.email }}</td>
+            <td class="px-3 py-2 whitespace-nowrap" data-testid="lead-phone">{{ phone(lead) }}</td>
             <td class="px-3 py-2">{{ lead.municipality }}</td>
             <td class="px-3 py-2">
               <span
@@ -110,6 +112,8 @@
       <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
         <dt class="font-semibold">E-mail</dt>
         <dd class="m-0 break-all">{{ lead.email }}</dd>
+        <dt class="font-semibold">Telefone</dt>
+        <dd class="m-0" data-testid="lead-detail-phone">{{ phone(lead) }}</dd>
         <dt class="font-semibold">Município</dt>
         <dd class="m-0">{{ lead.municipality }}</dd>
         <dt class="font-semibold">Recebido</dt>
