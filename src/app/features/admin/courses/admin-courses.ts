@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import {
@@ -15,6 +15,17 @@ import { AdminCrudPage } from '../shared/admin-crud';
 
 /** Slug kebab-case (igual ao BE). */
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** Ordem: número inteiro (o `min` cuida do >= 0). */
+function integerValidator(control: { value: number | null }) {
+  const v = control.value;
+  return v === null || Number.isInteger(v) ? null : { integer: true };
+}
+
+/** Sem `sortOrder` vai para o fim; empate mantém a ordem recebida. */
+export function bySortOrder(a: Course, b: Course): number {
+  return (a.sortOrder ?? Number.MAX_SAFE_INTEGER) - (b.sortOrder ?? Number.MAX_SAFE_INTEGER);
+}
 
 type CourseField = 'id' | 'title' | 'axis' | 'summary' | 'audience' | 'workloadHours' | 'sortOrder';
 
@@ -52,8 +63,11 @@ export class AdminCourses extends AdminCrudPage<Course> {
       null as number | null,
       [Validators.min(1), Validators.max(ADMIN_LIMITS.workloadHoursMax)],
     ],
-    sortOrder: [null as number | null, [Validators.min(0)]],
+    sortOrder: [null as number | null, [Validators.min(0), integerValidator]],
   });
+
+  /** Lista do admin na ordem de exibição. */
+  protected readonly sortedItems = computed(() => [...this.items()].sort(bySortOrder));
 
   protected fetch() {
     return this.api.courses();
@@ -81,7 +95,7 @@ export class AdminCourses extends AdminCrudPage<Course> {
       summary: course.summary,
       audience: course.audience,
       workloadHours: course.workloadHours ?? null,
-      sortOrder: null,
+      sortOrder: course.sortOrder ?? null,
     });
     this.form.controls.id.disable();
     this.openForm(course.id);
@@ -98,6 +112,7 @@ export class AdminCourses extends AdminCrudPage<Course> {
     }
     return this.clientError(c.errors, {
       pattern: 'Use letras minúsculas, números e hífens (ex.: robotica-basica).',
+      integer: 'Use um número inteiro.',
     });
   }
 
