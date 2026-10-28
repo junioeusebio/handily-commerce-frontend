@@ -17,4 +17,6 @@ export interface Course {
   audience: string;
   /** Carga horária total em horas, quando definida. */
   workloadHours?: number;
+  /** Ordem de exibição no catálogo (menor primeiro). Opcional: só vem quando o BE devolve. */
+  sortOrder?: number;
 }

@@ -108,6 +108,32 @@ describe('AdminCourses', () => {
     http.expectOne(`${API_ROOT}/courses`).flush([course]);
   });
 
+  it('prefills Ordem on edit and sends it on PUT', () => {
+    const { c } = setup();
+    http.expectOne(`${API_ROOT}/courses`).flush([course]);
+    c.openEdit({ ...course, sortOrder: 3 });
+    expect(c.form.controls.sortOrder.value).toBe(3);
+    c.form.patchValue({ sortOrder: 1.5 });
+    c.form.controls.sortOrder.markAsDirty();
+    expect(c.errorFor('sortOrder')).toBe('Use um número inteiro.');
+    c.form.patchValue({ sortOrder: 4 });
+    c.save(new Event('submit'));
+    const req = http.expectOne(`${API_ROOT}/admin/courses/robotica`);
+    expect(req.request.body.sortOrder).toBe(4);
+    req.flush(course);
+    http.expectOne(`${API_ROOT}/courses`).flush([course]);
+  });
+
+  it('lists courses by sortOrder, missing order last', () => {
+    const { c } = setup();
+    http.expectOne(`${API_ROOT}/courses`).flush([
+      { ...course, id: 'sem-ordem' },
+      { ...course, id: 'b', sortOrder: 2 },
+      { ...course, id: 'a', sortOrder: 0 },
+    ]);
+    expect(c.sortedItems().map((x: Course) => x.id)).toEqual(['a', 'b', 'sem-ordem']);
+  });
+
   it('deletes after confirmation', () => {
     const { c } = setup();
     http.expectOne(`${API_ROOT}/courses`).flush([course]);

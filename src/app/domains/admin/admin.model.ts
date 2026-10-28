@@ -15,6 +15,8 @@ export interface AdminLead {
   name: string;
   email: string;
   municipality: string;
+  /** Só dígitos (10 ou 11); leads antigos podem vir sem telefone. */
+  phone?: string | null;
   message?: string | null;
   createdAt: string;
   status: LeadStatus;

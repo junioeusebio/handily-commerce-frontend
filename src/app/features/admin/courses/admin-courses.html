@@ -18,7 +18,7 @@
   </p>
 } @else {
   <ul class="m-0 grid list-none gap-3 p-0">
-    @for (course of items(); track course.id) {
+    @for (course of sortedItems(); track course.id) {
       <li
         class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-700 bg-slate-900 p-4"
       >
@@ -142,14 +142,20 @@
         }
       </div>
       <div>
-        <label for="course-order" class="mb-1 block text-sm font-semibold">Ordem (opcional)</label>
+        <label for="course-order" class="mb-1 block text-sm font-semibold">Ordem</label>
         <input
           id="course-order"
           type="number"
           min="0"
+          step="1"
+          inputmode="numeric"
+          aria-describedby="course-order-hint"
           formControlName="sortOrder"
           [class]="inputClass"
         />
+        <p id="course-order-hint" class="m-0 mt-1 text-xs text-slate-500">
+          Inteiro a partir de 0; menor aparece primeiro. Vazio mantém a ordem atual.
+        </p>
         @if (errorFor('sortOrder'); as e) {
           <p class="m-0 mt-1 text-xs text-red-700">{{ e }}</p>
         }
