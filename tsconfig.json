@@ -12,31 +12,30 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "./",
     "paths": {
       "@core": [
-        "src/app/core/index.ts"
+        "./src/app/core/index.ts"
       ],
       "@core/*": [
-        "src/app/core/*"
+        "./src/app/core/*"
       ],
       "@domains": [
-        "src/app/domains/index.ts"
+        "./src/app/domains/index.ts"
       ],
       "@domains/*": [
-        "src/app/domains/*"
+        "./src/app/domains/*"
       ],
       "@features": [
-        "src/app/features/index.ts"
+        "./src/app/features/index.ts"
       ],
       "@features/*": [
-        "src/app/features/*"
+        "./src/app/features/*"
       ],
       "@shared": [
-        "src/app/shared/index.ts"
+        "./src/app/shared/index.ts"
       ],
       "@shared/*": [
-        "src/app/shared/*"
+        "./src/app/shared/*"
       ]
     },
     "resolveJsonModule": true
