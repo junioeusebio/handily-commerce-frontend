@@ -19,6 +19,11 @@ export class Loading {
   readonly className = input('');
   /** Spinner compacto, sem padding nem texto visível (ex.: dentro de botões). */
   readonly inline = input(false);
+  /**
+   * Só visual (ex.: `@placeholder` de `@defer`): sem `role="status"`/`aria-live`,
+   * com `aria-hidden="true"` e sem texto para leitores de tela.
+   */
+  readonly decorative = input(false);
 
   protected readonly items = computed(() =>
     Array.from({ length: Math.max(1, Math.floor(this.count())) }, (_, i) => i),
