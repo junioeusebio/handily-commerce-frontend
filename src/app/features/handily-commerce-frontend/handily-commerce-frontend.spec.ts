@@ -27,6 +27,14 @@ const testCourses: Course[] = [
 
 describe('HandilyCommerceFrontend', () => {
   beforeEach(async () => {
+    // jsdom não implementa showModal de forma completa; a partir do jsdom 30, conteúdo de <dialog> fechado não recebe foco.
+    const proto = HTMLDialogElement.prototype as Partial<HTMLDialogElement>;
+    proto.showModal = function (this: HTMLDialogElement) {
+      this.setAttribute('open', '');
+    };
+    proto.close = function (this: HTMLDialogElement) {
+      this.removeAttribute('open');
+    };
     await TestBed.configureTestingModule({
       imports: [HandilyCommerceFrontend],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideAppEnvironment(testEnv)],
@@ -424,7 +432,7 @@ describe('HandilyCommerceFrontend', () => {
     req.flush({ id: 'abc' }, { status: 201, statusText: 'Created' });
     fixture.detectChanges();
 
-    expect(dialog.open).toBe(false);
+    expect(root.querySelector('dialog#lead-dialog')).toBeNull();
     expect(TestBed.inject(ToastService).toasts()[0]).toMatchObject({
       message: 'Recebemos seu contato! Em breve retornamos por e-mail.',
       type: 'success',
