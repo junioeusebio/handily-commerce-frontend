@@ -27,7 +27,8 @@ import {
 } from '@shared';
 
 export const LEAD_SUCCESS_MESSAGE = 'Recebemos seu contato! Em breve retornamos por e-mail.';
-export const LEAD_GENERIC_ERROR = 'Não foi possível enviar agora. Confira os campos e tente de novo.';
+export const LEAD_GENERIC_ERROR =
+  'Não foi possível enviar agora. Confira os campos e tente de novo.';
 
 /** Payload alinhado ao contrato `POST /api/v1/leads` (BE). */
 export interface LeadPayload {
