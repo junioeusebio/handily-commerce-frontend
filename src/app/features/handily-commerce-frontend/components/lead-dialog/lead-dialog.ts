@@ -27,6 +27,7 @@ import {
 } from '@shared';
 
 export const LEAD_SUCCESS_MESSAGE = 'Recebemos seu contato! Em breve retornamos por e-mail.';
+export const LEAD_GENERIC_ERROR = 'Não foi possível enviar agora. Confira os campos e tente de novo.';
 
 /** Payload alinhado ao contrato `POST /api/v1/leads` (BE). */
 export interface LeadPayload {
@@ -84,6 +85,8 @@ export class LeadDialog {
   readonly sending = signal(false);
   /** Resultado do último envio com erro (sucesso fecha o modal e mostra toast). */
   readonly result = signal<'error' | null>(null);
+  /** Mensagem do erro em nível de formulário (genérica ou do 429). */
+  readonly errorMessage = signal(LEAD_GENERIC_ERROR);
   /** Erros por campo vindos do 400 (ValidationProblem) do BE. */
   private readonly serverErrors = signal<Partial<Record<LeadField, string>>>({});
 
@@ -199,6 +202,7 @@ export class LeadDialog {
           // Reabilita antes de aplicar erros do BE (enable emite valueChanges e limparia os erros).
           this.form.enable();
           this.serverErrors.set(fieldErrors(err));
+          this.errorMessage.set(rateLimitMessage(err) ?? LEAD_GENERIC_ERROR);
           this.result.set('error');
         },
       });
@@ -224,4 +228,26 @@ function fieldErrors(err: unknown): Partial<Record<LeadField, string>> {
     }
   }
   return out;
+}
+
+/** Mensagem para 429 (rate limit): usa o `detail` do BE ou um texto com o tempo de espera. */
+export function rateLimitMessage(err: unknown): string | null {
+  if (!(err instanceof HttpErrorResponse) || err.status !== 429) {
+    return null;
+  }
+  const body = err.error as { detail?: unknown; retryAfterSeconds?: unknown } | null;
+  if (typeof body?.detail === 'string' && body.detail.trim()) {
+    return body.detail.trim();
+  }
+  const fromBody = Number(body?.retryAfterSeconds);
+  const fromHeader = Number(err.headers?.get('Retry-After'));
+  const seconds = [fromBody, fromHeader].find((n) => Number.isFinite(n) && n > 0);
+  if (seconds === undefined) {
+    return 'Muitas tentativas de envio. Aguarde alguns minutos e tente de novo.';
+  }
+  const wait =
+    seconds >= 60
+      ? `${Math.ceil(seconds / 60)} minuto${Math.ceil(seconds / 60) > 1 ? 's' : ''}`
+      : `${Math.ceil(seconds)} segundo${Math.ceil(seconds) > 1 ? 's' : ''}`;
+  return `Muitas tentativas de envio. Aguarde ${wait} e tente de novo.`;
 }
