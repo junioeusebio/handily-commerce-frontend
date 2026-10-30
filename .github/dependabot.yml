@@ -1,4 +1,4 @@
-# Dependabot — atualizações semanais de dependências.
+# Dependabot — atualizações semanais (segunda), agrupadas: 1 PR por ecossistema.
 # Os PRs já nascem com o label "Release Patch" para passar no require-release-label.
 version: 2
 updates:
@@ -8,7 +8,7 @@ updates:
       interval: weekly
       day: monday
       timezone: America/Sao_Paulo
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
     labels:
       - "Release Patch"
     commit-message:
@@ -25,6 +25,11 @@ updates:
         update-types:
           - minor
           - patch
+      production-dependencies:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: /
@@ -36,3 +41,8 @@ updates:
       - "Release Patch"
     commit-message:
       prefix: "ci(deps)"
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns:
+          - "*"
