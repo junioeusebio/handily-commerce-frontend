@@ -12,7 +12,12 @@ import {
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { finalize, map } from 'rxjs';
 
 import { LeadService, type LeadCreated } from '@domains';
@@ -97,6 +102,12 @@ export class LeadDialog {
     message: ['', [Validators.maxLength(LEAD_MAX.message)]],
   });
 
+  /**
+   * Honeypot anti-spam: campo invisível para pessoas, fora do `form` (não valida nem vai ao BE).
+   * Se vier preenchido, simulamos sucesso sem chamar a API.
+   */
+  protected readonly honeypot = new FormControl('', { nonNullable: true });
+
   /** Status do form como signal (ponte Reactive Forms → signals). */
   private readonly status = toSignal(this.form.statusChanges, {
     initialValue: this.form.status,
@@ -169,6 +180,10 @@ export class LeadDialog {
       this.form.markAllAsTouched();
       return;
     }
+    if (this.honeypot.value.trim()) {
+      this.pretendSuccess();
+      return;
+    }
     const v = this.form.getRawValue();
     const message = v.message.trim();
     this.sending.set(true);
@@ -202,6 +217,14 @@ export class LeadDialog {
           this.result.set('error');
         },
       });
+  }
+
+  /** Bot caiu no honeypot: fecha e mostra o toast como se tivesse enviado, sem chamar o BE. */
+  private pretendSuccess(): void {
+    this.form.reset();
+    this.honeypot.reset();
+    this.close();
+    this.toast.show({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
   }
 
   private blankRequired(): boolean {

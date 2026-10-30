@@ -6,7 +6,7 @@
   [dismissDisabled]="sending()"
 >
   <form
-    class="px-[1.35rem] pb-[1.4rem] pt-5"
+    class="relative px-[1.35rem] pb-[1.4rem] pt-5"
     [formGroup]="form"
     (ngSubmit)="onSubmit($event)"
     [attr.aria-busy]="sending() ? 'true' : null"
@@ -20,6 +20,17 @@
       <strong>{{ contactEmail() }}</strong
       >.
     </p>
+    <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+      <label for="lead-website">Website</label>
+      <input
+        id="lead-website"
+        name="website"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        [formControl]="honeypot"
+      />
+    </div>
     <div class="mb-[0.85rem] flex flex-col gap-[0.35rem]">
       <label class="text-xs font-semibold" for="lead-nome">Nome</label>
       <input

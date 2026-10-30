@@ -175,6 +175,33 @@ describe('LeadDialog', () => {
     expect(submit().disabled).toBe(false);
   });
 
+  it('should keep the honeypot hidden from users and out of the payload', async () => {
+    const { fixture, type, q } = await setup();
+    const hp = q<HTMLInputElement>('#lead-website');
+    expect(hp.tabIndex).toBe(-1);
+    expect(hp.getAttribute('autocomplete')).toBe('off');
+    expect(hp.closest('[aria-hidden="true"]')?.className).toContain('-left-[9999px]');
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    const req = http.expectOne(leadsUrl);
+    expect(req.request.body).not.toHaveProperty('website');
+    req.flush({ id: '1' }, { status: 201, statusText: 'Created' });
+  });
+
+  it('should pretend success without calling the API when the honeypot is filled', async () => {
+    const { fixture, type, q } = await setup();
+    const showSpy = vi.spyOn(TestBed.inject(ToastService), 'show');
+    fillValid(type);
+    type('#lead-website', 'https://spam.example');
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    http.expectNone(leadsUrl);
+    expect(showSpy).toHaveBeenCalledWith({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
+    expect(fixture.componentInstance.dialog().open()).toBe(false);
+    expect(fixture.componentInstance.last).toBeNull();
+  });
+
   it('should show generic error on network failure', async () => {
     const { fixture, type, q, root } = await setup();
     fillValid(type);
