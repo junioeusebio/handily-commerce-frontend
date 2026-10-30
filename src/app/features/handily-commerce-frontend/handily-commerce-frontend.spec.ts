@@ -500,6 +500,10 @@ describe('HandilyCommerceFrontend', () => {
     expect(root.querySelector('#cursos')).toBeTruthy();
     expect(root.querySelector('#depoimentos')).toBeTruthy();
     expect(root.querySelector('#faq')).toBeTruthy();
+    expect(root.querySelectorAll('#cursos .loading-skeleton-cards > li').length).toBe(4);
+    expect(root.querySelectorAll('#depoimentos .loading-skeleton-list > li').length).toBe(3);
+    expect(root.querySelectorAll('#faq .loading-skeleton-list > li').length).toBe(4);
+    expect(root.querySelector('#cursos [role="status"]')).toBeNull();
 
     await flushBootstrap(http, {}, fixture);
     fixture.detectChanges();
