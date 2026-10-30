@@ -8,7 +8,9 @@ import type { LeadCreated } from '@domains';
 
 import { ToastService } from '@shared';
 
-import { LEAD_SUCCESS_MESSAGE, LeadDialog } from './lead-dialog';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+
+import { LEAD_SUCCESS_MESSAGE, LeadDialog, rateLimitMessage } from './lead-dialog';
 
 const testEnv: AppEnvironment = {
   production: false,
@@ -200,6 +202,44 @@ describe('LeadDialog', () => {
     expect(showSpy).toHaveBeenCalledWith({ message: LEAD_SUCCESS_MESSAGE, type: 'success' });
     expect(fixture.componentInstance.dialog().open()).toBe(false);
     expect(fixture.componentInstance.last).toBeNull();
+  });
+
+  it('should show 429 detail, keep values and re-enable the form without toast', async () => {
+    const { fixture, type, q, root, submit } = await setup();
+    const showSpy = vi.spyOn(TestBed.inject(ToastService), 'show');
+    fillValid(type);
+    q<HTMLFormElement>('form').requestSubmit();
+    fixture.detectChanges();
+    http.expectOne(leadsUrl).flush(
+      {
+        title: 'Muitas requisições',
+        status: 429,
+        detail: 'Você enviou muitas solicitações. Tente novamente em 9 minutos.',
+        retryAfterSeconds: 540,
+      },
+      { status: 429, statusText: 'Too Many Requests', headers: { 'Retry-After': '540' } },
+    );
+    fixture.detectChanges();
+    expect(q('#lead-form-erro').textContent).toContain('Tente novamente em 9 minutos.');
+    expect(root.textContent).not.toContain('Não foi possível enviar agora.');
+    expect(q<HTMLInputElement>('#lead-nome').value).toBe('Maria Silva');
+    expect(q<HTMLInputElement>('#lead-nome').disabled).toBe(false);
+    expect(submit().disabled).toBe(false);
+    expect(showSpy).not.toHaveBeenCalled();
+    expect(fixture.componentInstance.last).toBeNull();
+  });
+
+  it('should build fallback 429 messages from retryAfterSeconds or Retry-After', () => {
+    const e = (error: unknown, headers?: Record<string, string>, status = 429) =>
+      new HttpErrorResponse({ status, error, headers: new HttpHeaders(headers) });
+    expect(rateLimitMessage(e({ retryAfterSeconds: 120 }))).toContain('Aguarde 2 minutos');
+    expect(rateLimitMessage(e({ retryAfterSeconds: 61 }))).toContain('Aguarde 2 minutos');
+    expect(rateLimitMessage(e({ retryAfterSeconds: 60 }))).toContain('Aguarde 1 minuto ');
+    expect(rateLimitMessage(e(null, { 'Retry-After': '30' }))).toContain('Aguarde 30 segundos');
+    expect(rateLimitMessage(e({ retryAfterSeconds: 1 }))).toContain('Aguarde 1 segundo ');
+    expect(rateLimitMessage(e({ detail: '  ' }))).toContain('Aguarde alguns minutos');
+    expect(rateLimitMessage(e({}, {}, 400))).toBeNull();
+    expect(rateLimitMessage(new Error('x'))).toBeNull();
   });
 
   it('should show generic error on network failure', async () => {
