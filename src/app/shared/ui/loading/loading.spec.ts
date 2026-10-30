@@ -48,4 +48,14 @@ describe('Loading', () => {
     expect(root.querySelector('.motion-safe\\:animate-spin')?.className).toContain('size-4');
     expect(root.querySelector('.sr-only')?.textContent).toContain('Enviando…');
   });
+
+  it('renders a decorative skeleton hidden from assistive tech', () => {
+    const root = render({ variant: 'skeleton-list', count: 2, decorative: true });
+    const wrapper = root.firstElementChild as HTMLElement;
+    expect(wrapper.getAttribute('aria-hidden')).toBe('true');
+    expect(wrapper.getAttribute('role')).toBeNull();
+    expect(wrapper.getAttribute('aria-live')).toBeNull();
+    expect(root.querySelector('.sr-only')).toBeNull();
+    expect(root.querySelectorAll('.loading-skeleton-list > li').length).toBe(2);
+  });
 });

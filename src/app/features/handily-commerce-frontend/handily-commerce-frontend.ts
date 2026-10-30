@@ -12,6 +12,7 @@ import { catchError, of, retry } from 'rxjs';
 
 import { APP_VERSION } from '@core';
 import { ApiStatusService } from '@domains';
+import { Loading } from '@shared';
 
 import { HomeAbout } from './components/home-about/home-about';
 import { HomeBanner } from './components/home-banner/home-banner';
@@ -42,6 +43,7 @@ import { LeadDialog } from './components/lead-dialog/lead-dialog';
     HomeContact,
     HomeFooter,
     LeadDialog,
+    Loading,
   ],
   templateUrl: './handily-commerce-frontend.html',
   styleUrl: './handily-commerce-frontend.scss',

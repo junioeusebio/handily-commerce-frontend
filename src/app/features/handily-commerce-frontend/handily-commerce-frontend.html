@@ -17,7 +17,7 @@
     } @placeholder {
       <section id="cursos" class="bg-[#f3f6fa] py-12" aria-hidden="true">
         <div class="mx-auto max-w-6xl px-5 sm:px-6">
-          <div class="min-h-80 rounded-2xl bg-white/70"></div>
+          <app-loading variant="skeleton-cards" [count]="4" [decorative]="true" />
         </div>
       </section>
     }
@@ -27,7 +27,7 @@
     } @placeholder {
       <section id="depoimentos" class="py-12" aria-hidden="true">
         <div class="mx-auto max-w-6xl px-5 sm:px-6">
-          <div class="min-h-56 rounded-2xl bg-[#f3f6fa]"></div>
+          <app-loading variant="skeleton-list" [count]="3" [decorative]="true" />
         </div>
       </section>
     }
@@ -36,7 +36,7 @@
     } @placeholder {
       <section id="faq" class="bg-[#f3f6fa] py-12" aria-hidden="true">
         <div class="mx-auto max-w-6xl px-5 sm:px-6">
-          <div class="min-h-72 rounded-2xl bg-white/70"></div>
+          <app-loading variant="skeleton-list" [count]="4" [decorative]="true" />
         </div>
       </section>
     }

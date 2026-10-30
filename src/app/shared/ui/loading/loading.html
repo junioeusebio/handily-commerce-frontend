@@ -1,9 +1,12 @@
 <div
-  role="status"
-  aria-live="polite"
+  [attr.role]="decorative() ? null : 'status'"
+  [attr.aria-live]="decorative() ? null : 'polite'"
+  [attr.aria-hidden]="decorative() ? 'true' : null"
   [class]="inline() ? 'inline-flex ' + className() : className()"
 >
-  <span class="sr-only">{{ message() }}</span>
+  @if (!decorative()) {
+    <span class="sr-only">{{ message() }}</span>
+  }
   @switch (variant()) {
     @case ('skeleton-cards') {
       <ul
