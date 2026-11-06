@@ -1,6 +1,6 @@
 {
   "name": "handily-commerce-frontend",
-  "version": "0.20.2",
+  "version": "0.20.3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -23,8 +23,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^22.2.3",
-    "@angular/cli": "^22.2.4",
+    "@angular/build": "^22.2.5",
+    "@angular/cli": "^22.2.5",
     "@angular/compiler-cli": "^22.2.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@vitest/coverage-v8": "^5.0.5",
