@@ -81,10 +81,17 @@ describe('App', () => {
     http.verify();
   });
 
-  it('redirects /admin to the login when there is no session', async () => {
+  it('redirects /admin to the login when the session cannot be refreshed', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
-    await router.navigateByUrl('/admin/leads');
+    const http = TestBed.inject(HttpTestingController);
+    const navigation = router.navigateByUrl('/admin/leads');
+    await vi.waitFor(() =>
+      http
+        .expectOne(`${resolveApiRoot(testEnv)}/auth/refresh`)
+        .flush(null, { status: 401, statusText: 'Unauthorized' }),
+    );
+    await navigation;
     fixture.detectChanges();
     expect(router.url).toBe('/admin/login?returnUrl=%2Fadmin%2Fleads');
   });
